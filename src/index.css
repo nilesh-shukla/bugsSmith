@@ -1,5 +1,16 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Oregano:ital@0;1&display=swap');
 
 body {
-    background-color: #0B201F;
+    font-family: "Instrument Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+    font-variation-settings: "wdth" 100;
+    background-color: #011327;
+}
+
+.font-oregano {
+  font-family: "Oregano", cursive;
+  font-weight: 400;
+  font-style: normal;
 }
