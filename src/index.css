@@ -1,16 +1,60 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Oregano:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Outfit:wght@100..900&display=swap');
 
 body {
     font-family: "Instrument Sans", sans-serif;
     font-optical-sizing: auto;
     font-style: normal;
     font-variation-settings: "wdth" 100;
-    background-color: #011327;
+    background-color: #011327ef;
+    overflow-x: hidden;
 }
 
-.font-oregano {
-  font-family: "Oregano", cursive;
-  font-weight: 400;
+.outfit-font {
+  font-family: "Outfit", sans-serif;
+  font-optical-sizing: auto;
   font-style: normal;
+}
+
+@keyframes spin-slow{
+  0%{
+    transform:  rotate(0deg);
+  }
+  100%{
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow{
+  animation: spin-slow 20s linear infinite;
+}
+
+@keyframes slideOut {
+    0% {
+        transform: translateX(0) translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(100%) translateY(0) rotate(0deg);
+        opacity: 0;
+    }
+}
+
+@keyframes slideIn {
+    0% {
+        transform: translateX(10px) translateY(20px) rotate(0deg);
+        opacity: 0.5;
+    }
+    100% {
+        transform: translateX(0) translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+.animate-slideOut {
+    animation: slideOut 0.5s ease-in-out forwards;
+}
+
+.animate-slideIn {
+    animation: slideIn 0.5s ease-in-out backwards;
 }
