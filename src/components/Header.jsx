@@ -1,4 +1,3 @@
-import React from 'react'
 import ImageStack from './ImageStack';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBriefcase, faCircleDot, faStar } from '@fortawesome/free-solid-svg-icons';
@@ -8,7 +7,7 @@ function Header() {
   return (
     <div className='w-screen z-0'>
       <img src="/header-background.png" alt="image#" className='animate-spin-slow absolute w-4xl bottom-1/4 left-1/2 blur-2xl' />
-      <div className='grid grid-cols-2 gap-2'>
+      <div className='grid xl:grid-cols-2 gap-2'>
 
         <div className='flex flex-col gap-6'>
           <div className='border items-center border-[#0095ba] w-fit rounded-full px-3 py-2'>
