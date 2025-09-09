@@ -101,7 +101,7 @@ function Home() {
 
         <div className='outfit-font flex flex-col'>
           <div className='w-fit p-2 mb-4 bg-[#294281] rounded-full'>
-            <h1 className='text-blue-300 text-sm'>FAQ</h1>
+            <h1 className='text-blue-300 text-sm'>Fequently Asked</h1>
           </div>
           <div>
             <div className='grid grid-cols-2 gap-2 items-center'>
