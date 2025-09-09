@@ -1,5 +1,6 @@
-@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Kode+Mono:wght@400..700&family=Outfit:wght@100..900&display=swap');
+@import "tailwindcss";
+
 body {
     font-family: "Instrument Sans", sans-serif;
     font-optical-sizing: auto;
@@ -56,6 +57,15 @@ body {
         opacity: 1;
     }
 }
+
+ @keyframes fadeIn{
+    0% {
+       opacity: 0 
+    }
+    100% {
+       opacity: 1 
+    }
+  }
 
 .animate-slideOut {
     animation: slideOut 0.5s ease-in-out forwards;

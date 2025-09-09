@@ -31,7 +31,7 @@ function Navigation() {
               Solutions
               <FontAwesomeIcon icon={faAngleDown} className='ml-1 text-[#0098cf]' />
             </a>
-            <a href="#" className="text-white font-medium">About Us</a>
+            <Link to="/about" className="text-white font-medium">About Us</Link>
             <Link to="/resources" className="text-white font-medium">Resources</Link>
             <a href="#" className="text-white font-medium">Integrations</a>
             <a href="#" className="text-white font-medium">Contact Us</a>

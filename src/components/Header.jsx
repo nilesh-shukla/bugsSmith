@@ -6,7 +6,7 @@ import { faBriefcase, faCircleDot, faStar } from '@fortawesome/free-solid-svg-ic
 function Header() {
   return (
     <div className='w-screen z-0'>
-      <img src="/header-background.png" alt="image#" className='animate-spin-slow absolute w-4xl bottom-1/4 left-1/2 blur-2xl' />
+      <img src="/header-background.png" alt="logoimage" className='animate-spin-slow absolute w-4xl bottom-1/4 left-1/2 blur-2xl' />
       <div className='grid xl:grid-cols-2 gap-2'>
 
         <div className='flex flex-col gap-6'>
