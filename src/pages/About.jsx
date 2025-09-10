@@ -2,11 +2,12 @@ import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import Footer from '../components/Footer'
-import { faBullseye, faCrosshairs } from '@fortawesome/free-solid-svg-icons'
+import AboutValues from '../components/AboutValues'
+import { faBullseye, faCrosshairs, faLink, faLightbulb, faRecycle, faStar } from '@fortawesome/free-solid-svg-icons'
 
 function About() {
   return (
-    <div className='flex flex-col gap-y-10 px-15 pt-[20vh] outfit-font'>
+    <div className='flex flex-col gap-y-20 px-15 pt-[20vh] outfit-font'>
         <div className='flex flex-col gap-y-20'>
 
             <div className='grid grid-cols-2'>
@@ -46,6 +47,25 @@ function About() {
 
         </div>
 
+        <div>
+            <div className='flex flex-col gap-y-10 bg-gradient-to-br from-transparent to-[#011e3f] border-4 border-[#98e5ef30] shadow-2xl rounded-2xl p-16'>
+                <div className='flex flex-col gap-y-5 w-full justify-center items-center'>
+                    <div className='bg-[#86acb1] p-1 rounded-full w-fit'>
+                        <h1 className='text-[#1178b3] font-semibold'>Our Values</h1>
+                    </div>
+                    <div className='flex flex-col items-center'>
+                        <h1 className='text-[3rem] font-semibold bg-gradient-to-br from-[#0e3f8e] to-[#0289c2] bg-clip-text text-transparent'>The Core Values of BugsSmith</h1>
+                        <p className='text-[#86acb1]'>Guiding principles driving our commitment to your success</p>
+                    </div>
+                </div>
+                <div className='flex justify-between gap-x-14'>
+                    <AboutValues icon={faLink} heading={"Integrity"} describe={"Bring feedback from specific Slack channels into BugsSmith"} />
+                    <AboutValues icon={faLightbulb} heading={"Innovation"} describe={"Leveraging the best tools and approaches to meet organizational needs"}/>
+                    <AboutValues icon={faRecycle} heading={"Adaptibility"} describe={"Tailoring solutions to meet the evolving demands of the modern workplace"}/>
+                    <AboutValues icon={faRecycle} heading={"Excellence"} describe={"Bring feedback from specific Slack channels into BugsSmith AI"}/>
+                </div>
+            </div>
+        </div>
 
         <Footer />
     </div>
