@@ -25,16 +25,33 @@ function Navigation() {
     <div className='fixed inset-0 w-full py-4 h-fit z-[999]'>
       <div className="w-full flex justify-center items-center">
         <nav className="flex items-center gap-8 px-8 py-4 rounded-full backdrop-blur-xl bg-blue-400/15">
+
+          {/* Logo */}
+          <Link to={"/"}>
           <img src="/web-logo.png" alt="Logo" className="w-10" />
+          </Link>
+
+          {/* Options */}
           <div className='hidden xl:flex items-center gap-6'>
-            <a href="#" className="text-white font-medium">
+
+            {/* Solution Links */}
+            <div className="text-[#9ebedf] hover:text-white group transition-all duration-300 ease-in-out font-medium group-hover:cursor-pointer">
               Solutions
-              <FontAwesomeIcon icon={faAngleDown} className='ml-1 text-[#0098cf]' />
-            </a>
-            <Link to="/about" className="text-white font-medium">About Us</Link>
-            <Link to="/resources" className="text-white font-medium">Resources</Link>
-            <a href="#" className="text-white font-medium">Integrations</a>
-            <a href="#" className="text-white font-medium">Contact Us</a>
+              <FontAwesomeIcon icon={faAngleDown} className='ml-1 text-[#0098cf] transform transition-transform duration-300 group-hover:rotate-180' />
+              {/* Menu for Solutions */}
+              <div className='opacity-0 absolute top-14 group-hover:opacity-100 duration-300 rounded-2xl p-6 bg-[#004c94d0] text-[#9ebedf]'>
+                <ul>
+                  <li className='hover:text-white hover:cursor-pointer'>
+                    <Link to="/solutions">Solutions for Industries</Link>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <Link to="/about" className="text-[#9ebedf] hover:text-white transition-all duration-300 ease-in-out font-medium">About Us</Link>
+            <Link to="/resources" className="text-[#9ebedf] hover:text-white transition-all duration-500 ease-in-out font-medium">Resources</Link>
+            <a href="#" className="text-[#9ebedf] hover:text-white transition-all duration-300 ease-in-out font-medium">Integrations</a>
+            <a href="#" className="text-[#9ebedf] hover:text-white transition-all duration-300 ease-in-out font-medium">Contact Us</a>
           </div>
           
           {/* MENU */}
