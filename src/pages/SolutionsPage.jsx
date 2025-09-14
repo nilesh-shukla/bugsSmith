@@ -1,22 +1,36 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight, faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 
 import FeatureCard from '../components/FeatureCard'
 import Footer from '../components/Footer'
-import { div } from 'framer-motion/client'
+import { div, image } from 'framer-motion/client'
 
 function SolutionsPage() {
     const cards = [
-        { heading: "AI-Powered Profile Analysis", describe: "Detects suspicious accounts by analyzing profile data, posting patterns, and engagement signals." },
-        { heading: "Real-Time Fake Handle Alerts", describe: "Instant notifications when impersonators or fake profiles are detected." },
-        { heading: "Behavioral Pattern Recognition", describe: "Identifies unusual activity such as spam posting or bot-like behavior." },
-        { heading: "Cross-Platform Detection", describe: "Scans multiple social media platforms for comprehensive protection." },
-        { heading: "Trust & Authenticity Score", describe: "Assigns authenticity scores to quickly judge whether a profile is genuine." },
-        { heading: "Community & Brand Protection", describe: "Shields individuals and organizations from scams and impersonation." }
+        { image:"/featureSolution-1.webp", heading: "AI-Powered Profile Analysis", describe: "Detects suspicious accounts by analyzing profile data, posting patterns, and engagement signals." },
+        { image:"/featureSolution-2.png", heading: "Real-Time Fake Handle Alerts", describe: "Instant notifications when impersonators or fake profiles are detected." },
+        { image:"/featureSolution-3.png", heading: "Behavioral Pattern Recognition", describe: "Identifies unusual activity such as spam posting or bot-like behavior." },
+        { image:"/featureSolution-4.png", heading: "Cross-Platform Detection", describe: "Scans multiple social media platforms for comprehensive protection." },
+        { image:"/featureSolution-5.png", heading: "Trust & Authenticity Score", describe: "Assigns authenticity scores to quickly judge whether a profile is genuine." },
+        { image:"/featureSolution-6.png", heading: "Community & Brand Protection", describe: "Shields individuals and organizations from scams and impersonation." }
     ];
 
     const [currentIndex, setCurrentIndex] =useState(0);
+    const [cardWidth, setCardWidth] = useState(0);
+    const cardRef = useRef(null);
+
+    useEffect(() => {
+        if(cardRef.current){
+            setCardWidth(cardRef.current.offsetWidth);
+        }
+        const handleResize = () => {
+            if(cardRef.current) setCardWidth(cardRef.current.offsetWidth);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
 
     const handleNext = () => {
         setCurrentIndex((prev) => (prev+1) % cards.length);
@@ -64,19 +78,20 @@ function SolutionsPage() {
             </div>
   
             {/* Feature Cards */}
-            <div className='relative overflow-hidden w-full'>
-                <div 
-                    className='flex gap-5 transition-transform duration-500 ease-in-out'
-                    style={{
-                        transform: `translateX(-${currentIndex*70}%)`
-                    }}
+            <div className="overflow-hidden relative w-full">
+                <div
+                className="flex gap-5 transition-transform duration-500 ease-in-out"
+                style={{ transform: `translateX(-${currentIndex * cardWidth}px)` }}
                 >
-                    {cards.map((card, index) => (
-                        <div key={index} className='flex justify-center'>
-                            <FeatureCard heading={card.heading} describe={card.describe}/>
-                        </div>
-                    ))}
-                </div>                
+                {cards.map((card, index) => (
+                    <div 
+                        key={index} 
+                        ref={index === 0 ? cardRef : null}
+                        className="flex-shrink-0 flex justify-center">
+                    <FeatureCard image={card.image} heading={card.heading} describe={card.describe} />
+                    </div>
+                ))}
+                </div>
             </div>
         </div>
         <Footer/>
