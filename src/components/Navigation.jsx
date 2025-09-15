@@ -39,7 +39,7 @@ function Navigation() {
               Solutions
               <FontAwesomeIcon icon={faAngleDown} className='ml-1 text-[#0098cf] transform transition-transform duration-300 group-hover:rotate-180' />
               {/* Menu for Solutions */}
-              <div className='opacity-0 absolute top-14 group-hover:opacity-100 duration-300 rounded-2xl p-6 bg-[#004c94d0] text-[#9ebedf]'>
+              <div className='opacity-0 absolute top-14 group-hover:opacity-100 duration-300 rounded-2xl p-6 bg-[#004c94] text-[#9ebedf]'>
                 <ul>
                   <li className='hover:text-white hover:cursor-pointer'>
                     <Link to="/solutions">Solutions for Industries</Link>
@@ -50,8 +50,7 @@ function Navigation() {
 
             <Link to="/about" className="text-[#9ebedf] hover:text-white transition-all duration-300 ease-in-out font-medium">About Us</Link>
             <Link to="/resources" className="text-[#9ebedf] hover:text-white transition-all duration-500 ease-in-out font-medium">Resources</Link>
-            <a href="#" className="text-[#9ebedf] hover:text-white transition-all duration-300 ease-in-out font-medium">Integrations</a>
-            <a href="#" className="text-[#9ebedf] hover:text-white transition-all duration-300 ease-in-out font-medium">Contact Us</a>
+            <Link to="/contact" className="text-[#9ebedf] hover:text-white transition-all duration-300 ease-in-out font-medium">Contact Us</Link>
           </div>
           
           {/* MENU */}
