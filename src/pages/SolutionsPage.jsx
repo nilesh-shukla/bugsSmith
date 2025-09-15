@@ -8,7 +8,7 @@ import { div, image } from 'framer-motion/client'
 
 function SolutionsPage() {
     const cards = [
-        { image:"/featureSolution-1.webp", heading: "AI-Powered Profile Analysis", describe: "Detects suspicious accounts by analyzing profile data, posting patterns, and engagement signals." },
+        { image:"/featureSolution-1.png", heading: "AI-Powered Profile Analysis", describe: "Detects suspicious accounts by analyzing profile data, posting patterns, and engagement signals." },
         { image:"/featureSolution-2.png", heading: "Real-Time Fake Handle Alerts", describe: "Instant notifications when impersonators or fake profiles are detected." },
         { image:"/featureSolution-3.png", heading: "Behavioral Pattern Recognition", describe: "Identifies unusual activity such as spam posting or bot-like behavior." },
         { image:"/featureSolution-4.png", heading: "Cross-Platform Detection", describe: "Scans multiple social media platforms for comprehensive protection." },
