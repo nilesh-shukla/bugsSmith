@@ -4,10 +4,10 @@ import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 function ImageStack() {
     const [images, setImages] = useState([
-        '/stackimg1.png',
-        '/stackimg2.png',
-        '/stackimg3.png',
-        '/stackimg4.png'
+        '/StackImage/stackImg-1.png',
+        '/StackImage/stackImg-2.png',
+        '/StackImage/stackImg-3.png',
+        '/StackImage/stackImg-4.png'
     ]);
     const [isAnimating, setIsAnimating] = useState(false);
     const [isAutoPlay, setAutoPlay] = useState(true);
