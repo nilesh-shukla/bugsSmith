@@ -16,6 +16,7 @@
     "@fortawesome/react-fontawesome": "^3.0.2",
     "@tailwindcss/postcss": "^4.1.12",
     "framer-motion": "^12.23.12",
+    "lucide-react": "^0.544.0",
     "postprocessing": "^6.37.7",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
