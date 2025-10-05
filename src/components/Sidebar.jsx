@@ -3,13 +3,13 @@ import { faChevronDown, faFileWaveform, faSitemap, faMicroscope, faChartSimple, 
 
 function Sidebar({onSelect}) {
   return (
-    <div className='w-1/5 flex flex-col gap-10 rounded-l-3xl bg-[#3568b45d] px-4 py-8'>
+    <div className='w-72 flex flex-col gap-10 rounded-l-3xl bg-[#3568b45d] px-4 py-8 sticky h-full'>
         {/* Title and History */}
         <div className="space-y-8">
-            <h1 className="text-3xl text-gray-300">BugsSmith</h1>
+            <h1 className="text-2xl text-gray-300">BugsSmith</h1>
             <div className="cursor-pointer">
                 <div className="w-full flex justify-between  items-center px-3 py-4 rounded-2xl bg-[#074f978e] hover:scale-105 transition-all duration-200">
-                    <div className='text-xl text-white flex items-center'>
+                    <div className='text-lg text-white flex items-center'>
                         <FontAwesomeIcon icon={faFileWaveform} className="mr-2 text-white" />
                         History
                     </div>
