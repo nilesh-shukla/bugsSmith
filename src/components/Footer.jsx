@@ -32,7 +32,7 @@ function Footer() {
                     <div className='flex flex-col outfit-font gap-3'>
                         <h1 className='text-lg text-[#a2baf4]'>Subscribe to get the latest updates and premium features</h1>
                         <div className='flex gap-4 items-center'>
-                            <input type="email" name="email" id="email" placeholder='Email' className='w-1/2 border border-[#a2bcf731] rounded-full bg-[#a2bcf732] px-4 py-3 text-white' />
+                            <input type="email" name="email" id="email" placeholder='Email' className='w-1/2 border border-[#a2bcf731] rounded-full bg-[#a2bcf732] px-4 py-3 text-white focus:outline-0 focus:ring-' />
                             <button className='px-4 py-3 bg-[#a2baf4] rounded-full'>Subscribe</button>
                         </div>
                         <p className='text-sm text-[#bcd9f379]'>By subscribing you agree to with our Privacy Policy and provide consent to receive updates from our company</p>

@@ -2,7 +2,7 @@ import React from 'react'
 
 function Analyze() {
   return (
-    <div></div>
+    <div>Analyze</div>
   )
 }
 

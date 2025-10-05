@@ -17,7 +17,7 @@ function AnalyzePage() {
             return <Visualize />;
         case "settings":
             return <Settings />;
-        case "integrations":
+        case "integerations":
             return <Integerate />;
         default:
             return <Dashboard />;

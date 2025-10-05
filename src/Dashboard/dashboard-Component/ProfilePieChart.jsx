@@ -35,6 +35,7 @@ function ProfilePieChart() {
                     ...base,
                     border: "none",
                     borderRadius: "15px",
+                    cursor: "pointer",
                     backgroundColor: "#f1f4f9",
                     boxShadow: state.isFocused ? "none" : base.boxShadow,
                 }),

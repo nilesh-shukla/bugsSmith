@@ -73,24 +73,12 @@ function Home() {
                     isActive={activeIndex === 3}
                     onToggle={() => setActiveIndex(activeIndex === 3 ? -1 : 3)} />
 
-                    <button className='bg-white p-4 w-fit rounded-full'>Join Waitlist</button>
+                    <button className='bg-white p-4 w-fit rounded-full'>Join Community</button>
               </div>
               {/* Right */}
               <div className='border-2 border-[#1e3a4f] bg-cover bg-center bg-no-repeat opacity-40 relative group rounded-xl cursor-pointer' style={{backgroundImage: `url(${chipSetImg})`}}>
-                <input 
-                  type="file"
-                  id='fileInput'
-                  className='hidden'
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    if(file){
-                      console.log("File Selected:", file.name);
-                    }
-                  }}
-                />
                 <label 
-                  htmlFor="fileInput"
-                  className='absolute top-1/3 left-1/2 transform -translate-x-1/2 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center gap-2'>
+                  className='absolute top-1/3 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center gap-2'>
                     <FontAwesomeIcon icon={faFolder} className='text-[10rem] text-[#3e79b9]' />
                 </label>
               </div>

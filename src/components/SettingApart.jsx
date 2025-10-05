@@ -1,4 +1,3 @@
-import React from 'react'
 
 function SettingApart({className, width, heading, describe, bgImage}) {
   return (
