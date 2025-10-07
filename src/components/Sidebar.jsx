@@ -1,7 +1,20 @@
+import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faFileWaveform, faSitemap, faMicroscope, faChartSimple, faGears, faCodeCompare } from '@fortawesome/free-solid-svg-icons';
+import { button } from 'framer-motion/client';
 
 function Sidebar({onSelect}) {
+
+  const [active, setActive] = useState("dashboard")
+
+  const options = [
+    { id: "dashboard", label: "Dashboard" },
+    { id: "analyze", label: "Analyze" },
+    { id: "visualise", label: "Visualise" },
+    { id: "settings", label: "Settings" },
+    { id: "integerations", label: "Integerations" }
+  ];
+
   return (
     <div className='w-72 flex flex-col gap-10 rounded-l-3xl bg-[#3568b45d] px-4 py-8 sticky h-full'>
         {/* Title and History */}
@@ -19,28 +32,16 @@ function Sidebar({onSelect}) {
         </div>
         {/* Dashboard Options */}
         <div> 
-            <ul className='flex flex-col gap-4 text-lg text-white'  style={{ fontWeight: 200}}>
-                <li className='items-center cursor-pointer' onClick={() => onSelect("dashboard")}>
-                    <FontAwesomeIcon icon={faSitemap} className='mr-2 text-xl'/>
-                    Dashboard
-                </li>
-                <li className='items-center cursor-pointer' onClick={() => onSelect("analyze")}>
-                    <FontAwesomeIcon icon={faMicroscope} className='mr-2 text-xl'/>
-                    Analyze
-                </li>
-                <li className='items-center cursor-pointer' onClick={() => onSelect("visualize")}>
-                    <FontAwesomeIcon icon={faChartSimple} className='mr-2 text-xl'/>
-                    Visualize
-                </li>
-                <li className='items-center cursor-pointer' onClick={() => onSelect("settings")}>
-                    <FontAwesomeIcon icon={faGears} className='mr-2 text-xl'/>
-                    Settings
-                </li>
-                <li className='items-center cursor-pointer' onClick={() => onSelect("integerations")}>
-                    <FontAwesomeIcon icon={faCodeCompare} className='mr-2 text-xl'/>
-                    Integerations
-                </li>
-            </ul>
+            <div className='flex flex-col gap-4 text-lg text-white'  style={{ fontWeight: 200}}>
+                    {options.map((opt) => {
+                        return(
+                            <div key={opt.id} className={`items-center cursor-pointer ${active === opt.id ? "text-blue-400" : ""}`} onClick={() => {
+                                onSelect(opt.id);
+                                setActive(opt.id);
+                            }}>{opt.label}</div>
+                        )
+                })}
+            </div>
         </div>
     </div>
   )

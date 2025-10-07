@@ -43,7 +43,7 @@ function Dashboard() {
         <div className='grid grid-cols-2 gap-4'>
           {/* Img-Visualise */}
           <div className='relative flex bg-gradient-to-br from-[#2f8fee] via-[#135597] to-[#032f5b] p-4 rounded-3xl overflow-hidden'>
-            <img src="/dashboard-card.png" className='absolute -rotate-24 -inset-6 opacity-70' />
+            <img src="/dashboard-card.png" className='absolute -rotate-24 -inset-6 opacity-70 z-10' />
             <div className='mt-auto space-y-2'>
               <h1 className='text-2xl text-white leading-tight'>Visualise your dataset for more precise and easy understanding</h1>
               <p className='leading-tight text-[#9dd5e3]'>Things like graphical representation using bars, pie-charts and distplots can help in better understanding of dataset</p>
@@ -54,8 +54,8 @@ function Dashboard() {
           <div className='grid grid-rows-4 gap-2'>
             <Features icon={faEarthAsia} iconBgColor={"bg-violet-500"} title="Overall Profiles" numbers="21,350" changingRate="5%" rateColor={"text-purple-500"}/>
             <Features icon={faSkull} iconBgColor={"bg-blue-500"} title="Suspicious" numbers="8681" changingRate="10%" rateColor={"text-blue-500"}/>
-            <Features icon={faRobot} iconBgColor={"bg-blue-200"} title="Bots" numbers="324" changingRate="15%" rateColor={"text-blue-400"}/>
-            <Features icon={faPeopleLine} iconBgColor={"bg-green-500"} title="Clean" numbers="12345" changingRate="20%" rateColor={"text-green-500"}/>
+            <Features icon={faRobot} iconBgColor={"bg-gray-500"} title="Bots" numbers="324" changingRate="15%" rateColor={"text-blue-400"}/>
+            <Features icon={faPeopleLine} iconBgColor={"bg-green-500"} title="Clean" numbers="12,345" changingRate="20%" rateColor={"text-green-900"}/>
           </div>
         </div>
 

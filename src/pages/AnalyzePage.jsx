@@ -2,19 +2,20 @@ import { useState } from 'react';
 
 import Sidebar from '../components/Sidebar';
 import Dashboard from '../Dashboard/Dashboard';
-import Visualize from '../Dashboard/Visualise';
+import Visualise from '../Dashboard/Visualise';
 import Settings from '../Dashboard/Settings';
 import Analyze from '../Dashboard/Analyze';
 import Integerate from '../Dashboard/Integerate';
 
 function AnalyzePage() {
   const [activePage, setActivePage] = useState("dashboard");
+
   const renderPage = () => {
     switch(activePage){
         case "analyze":
             return <Analyze />;
-        case "visualize":
-            return <Visualize />;
+        case "visualise":
+            return <Visualise />;
         case "settings":
             return <Settings />;
         case "integerations":
