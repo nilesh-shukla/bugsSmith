@@ -3,6 +3,7 @@ import Select from 'react-select'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faDownload, faGavel, faL } from "@fortawesome/free-solid-svg-icons"
 import FileReaderSimulator from "./dashboard-Component/FileReaderSimulator"
+import FileFeatureCards from "./dashboard-Component/FileFeatureCards"
 
 function Analyze() {
 
@@ -39,9 +40,9 @@ function Analyze() {
   ];
 
   return (
-    <div className='px-12 py-4'>
+    <div className='px-12 py-4 space-y-4'>
       <h1 className='text-[3rem] text-white font-semibold'>Analyze</h1>
-      <p className='text-[#789] mb-8'>We analyze digital footprints to separate genuine users from imposters</p>
+      <p className='text-[#789]'>We analyze digital footprints to separate genuine users from imposters</p>
       <div className='grid grid-cols-5 gap-4'>
 
         {/* Input Form Field */}
@@ -145,6 +146,14 @@ function Analyze() {
             }
           </div>
         </div>
+      </div>
+
+      {/* File-Features */}
+      <div className="p-6 bg-white rounded-3xl grid grid-rows-2 grid-cols-2 gap-4">
+        <FileFeatureCards />
+        <FileFeatureCards />
+        <FileFeatureCards />
+        <FileFeatureCards />
       </div>
     </div>
   )
