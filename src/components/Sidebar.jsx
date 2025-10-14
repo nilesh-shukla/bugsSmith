@@ -1,18 +1,19 @@
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown, faFileWaveform, faSitemap, faMicroscope, faChartSimple, faGears, faCodeCompare } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown, faFileWaveform, faSitemap, faMicroscope, faChartSimple, faGears, faCodeCompare, faIdBadge, faMagnifyingGlassChart, faGear, faCodeMerge  } from '@fortawesome/free-solid-svg-icons';
 import { button } from 'framer-motion/client';
+import { icon } from '@fortawesome/fontawesome-svg-core';
 
 function Sidebar({onSelect}) {
 
   const [active, setActive] = useState("dashboard")
 
   const options = [
-    { id: "dashboard", label: "Dashboard" },
-    { id: "analyze", label: "Analyze" },
-    { id: "visualise", label: "Visualise" },
-    { id: "settings", label: "Settings" },
-    { id: "integerations", label: "Integerations" }
+    { id: "dashboard", label: "Dashboard", icon : faIdBadge  },
+    { id: "analyze", label: "Analyze", icon : faMagnifyingGlassChart },
+    { id: "visualise", label: "Visualise", icon : faChartSimple } ,
+    { id: "settings", label: "Settings", icon : faGear },
+    { id: "integerations", label: "Integerations", icon : faCodeMerge }
   ];
 
   return (
@@ -23,7 +24,6 @@ function Sidebar({onSelect}) {
             <div className="cursor-pointer">
                 <div className="w-full flex justify-between  items-center px-3 py-4 rounded-2xl bg-[#074f978e] hover:scale-105 transition-all duration-200">
                     <div className='text-lg text-white flex items-center'>
-                        <FontAwesomeIcon icon={faFileWaveform} className="mr-2 text-white" />
                         History
                     </div>
                     <FontAwesomeIcon icon={faChevronDown} className='text-[#63a9c5]'/>
@@ -38,7 +38,10 @@ function Sidebar({onSelect}) {
                             <div key={opt.id} className={`items-center cursor-pointer ${active === opt.id ? "text-blue-400" : ""}`} onClick={() => {
                                 onSelect(opt.id);
                                 setActive(opt.id);
-                            }}>{opt.label}</div>
+                            }}>
+                                <FontAwesomeIcon icon={opt.icon} className='mr-2 text-lg' />
+                                {opt.label}
+                            </div>
                         )
                 })}
             </div>

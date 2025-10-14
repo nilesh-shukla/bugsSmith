@@ -4,6 +4,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faDownload, faGavel, faL } from "@fortawesome/free-solid-svg-icons"
 import FileReaderSimulator from "./dashboard-Component/FileReaderSimulator"
 import FileFeatureCards from "./dashboard-Component/FileFeatureCards"
+import StraightLineMeter from "./dashboard-Component/StraightLineMeter"
+import SusProfileTable from "./dashboard-Component/SusProfileTable"
 
 function Analyze() {
 
@@ -37,6 +39,99 @@ function Analyze() {
     { value: "facebook", label: "Facebook" },
     { value: "threads", label: "Threads" },
     { value: "linkedin", label: "LinkedIn" },
+  ];
+
+  const target = 70;
+  const completness = "5/7";
+  const featureMsg = [
+    // ≤4 (e.g., 2, 3, or 4)	CRITICAL FAILURE	IMPACTED PREDICTION: Fewer than half of the required features were available for analysis. The resulting Suspicion Score is highly unreliable due to severe data gaps. Manual review is MANDATORY.	dot: 'bg-red-600', text: 'text-red-700'
+
+    //5	PARTIAL COVERAGE	BELOW EXPECTATIONS: Prediction utilized partial data. Missing features (e.g., post count or name length) forced the model to impute a value. The confidence score may be slightly suppressed.	dot: 'bg-amber-500', text: 'text-amber-700'
+
+    //6 or 7	OPTIMAL COVERAGE	HIGHLY RELIABLE: The prediction utilized a near-complete or full dataset. The resulting Suspicion Score is based on a robust feature set, providing high confidence in the risk category.	dot: 'bg-sky-600', text: 'text-sky-700'
+  ]
+  const susprofiles = [
+    {
+        status: "CRITICAL",
+        id: "ITBP-JOB-001",
+        platform: "X(Twitter)",
+        filename: "Border_Sector_A_V1.csv",
+    },
+    {
+        status: "BOT",
+        id: "ITBP-JOB-002",
+        name: "YI YUAN BOT",
+        platform: "Facebook",
+        filename: "LWE_Targets_V2.csv",
+    },
+    {
+        status: "CRITICAL",
+        id: "ITBP-JOB-004",
+        platform: "X(Twitter)",
+        filename: "Dormant_Accounts.csv",
+    },
+    {
+        status: "CRITICAL",
+        id: "ITBP-JOB-005",
+        platform: "Facebook",
+        filename: "LWE_Targets_V2.csv",
+    },
+    {
+        status: "GENUINE",
+        id: "ITBP-JOB-006",
+        platform: "Instagram",
+        filename: "Validation_Set_Q3.csv",
+    },
+    {
+        status: "GENUINE",
+        id: "ITBP-JOB-007",
+        platform: "X(Twitter)",
+        filename: "Validation_Set_Q3.csv",
+    },
+    {
+        status: "PENDING",
+        id: "ITBP-JOB-008",
+        platform: "Facebook",
+        filename: "New_Upload_10-14.csv",
+    },
+    {
+        status: "BOT",
+        id: "ITBP-JOB-003",
+        name: "crypto_trader_4890",
+        platform: "Instagram",
+        filename: "Border_Sector_A_V1.csv",
+    },
+    {
+        status: "#INPUT_ERROR",
+        id: "ITBP-JOB-009",
+        platform: "Netlify",
+        filename: "Malformatted_Inputs.csv",
+    },
+    {
+        status: "GENUINE",
+        id: "ITBP-JOB-010",
+        platform: "Instagram",
+        filename: "Validation_Set_Q3.csv",
+    },
+    {
+        status: "BOT",
+        id: "ITBP-JOB-011",
+        name: "YI YUAN BOT",
+        platform: "Facebook",
+        filename: "LWE_Targets_V2.csv",
+    },
+    {
+        status: "CRITICAL",
+        id: "ITBP-JOB-012",
+        platform: "X(Twitter)",
+        filename: "Dormant_Accounts.csv",
+    },
+    {
+        status: "CRITICAL",
+        id: "ITBP-JOB-013",
+        platform: "Facebook",
+        filename: "TWS_Likes_V.csv",
+    },
   ];
 
   return (
@@ -135,11 +230,11 @@ function Analyze() {
             <p className="text-[#789]">Scanning of your profile or scapping of profile can be seen here</p>
           </div>
           {/* Simulator Here */}
-          <div className=" mt-4 max-h-full overflow-y-auto">
+          <div className=" mt-4 h-full overflow-y-auto">
             {fileContent ? (
               <FileReaderSimulator key={fileName} fileContent={fileContent} />
             ) : (
-              <div className="p-6 max-h-full text-[#81acd7] font-mono bg-black rounded-lg border border-gray-600">
+              <div className="p-6 h-full text-[#81acd7] font-mono bg-black rounded-lg border border-gray-600">
                 ----SMITHING YOUR FILE HERE----
               </div>
             )
@@ -149,11 +244,37 @@ function Analyze() {
       </div>
 
       {/* File-Features */}
-      <div className="p-6 bg-white rounded-3xl grid grid-rows-2 grid-cols-2 gap-4">
-        <FileFeatureCards />
-        <FileFeatureCards />
-        <FileFeatureCards />
-        <FileFeatureCards />
+      <div className="p-6 bg-white rounded-3xl grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+
+          <FileFeatureCards heading={"Model Confidence Score"}>
+            <h1 className="text-[2.8rem] font-semibold mt-1">{target}%</h1>
+            <StraightLineMeter value={target} min={0} max={100} width={700} ticks={10} label="Confidence" />
+          </FileFeatureCards>
+
+          <FileFeatureCards heading={"Data Completness"}>
+            <h1 className="text-[2.8rem] font-semibold mt-4">{completness}<span className="text-sm text-[#3c5772] font-normal"> features inside the dataset</span></h1>
+            {/* dot: 'bg-amber-500', text: 'text-amber-700' */}
+            <p className="text-lg text-amber-700 leading-tight"> Prediction utilized partial data. Missing features (e.g., post count or name length) forced the model to impute a value. The confidence score may be slightly suppressed.</p>
+          </FileFeatureCards>
+
+        </div>
+
+        <FileFeatureCards heading={"Suspicious Profiles"} >
+          <div className="overflow-x-auto scrollbar-hide">
+            <div className="grid grid-cols-4 w-full items-center my-4 font-semibold">
+              <h1>STATUS</h1>
+              <h1>ID</h1>
+              <h1>PLATFORM</h1>
+              <h1>FILE</h1>
+            </div>
+            <div className="space-y-2">
+              {susprofiles.map((profile) => (
+                <SusProfileTable key={profile.id} status={profile.status} id={profile.id} platform={profile.platform} filename={profile.filename} />
+              ))}
+            </div>
+          </div>
+        </FileFeatureCards>
       </div>
     </div>
   )
