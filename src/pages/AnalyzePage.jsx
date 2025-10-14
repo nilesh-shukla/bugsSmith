@@ -3,7 +3,6 @@ import { useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import Dashboard from '../Dashboard/Dashboard';
 import Visualise from '../Dashboard/Visualise';
-import Settings from '../Dashboard/Settings';
 import Analyze from '../Dashboard/Analyze';
 import Integerate from '../Dashboard/Integerate';
 
@@ -16,8 +15,6 @@ function AnalyzePage() {
             return <Analyze />;
         case "visualise":
             return <Visualise />;
-        case "settings":
-            return <Settings />;
         case "integerations":
             return <Integerate />;
         default:

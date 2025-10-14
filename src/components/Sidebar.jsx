@@ -12,7 +12,6 @@ function Sidebar({onSelect}) {
     { id: "dashboard", label: "Dashboard", icon : faIdBadge  },
     { id: "analyze", label: "Analyze", icon : faMagnifyingGlassChart },
     { id: "visualise", label: "Visualise", icon : faChartSimple } ,
-    { id: "settings", label: "Settings", icon : faGear },
     { id: "integerations", label: "Integerations", icon : faCodeMerge }
   ];
 
