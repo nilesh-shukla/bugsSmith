@@ -31,7 +31,7 @@ function AnalyzePage() {
                 </div>
 
                 {/* Content Area */}
-                <div className='flex-1 h-full overflow-y-auto rounded-r-3xl bg-[#283a4d5b] p-2 scrollbar-hide'>
+                <div className='flex-1 h-full overflow-y-auto rounded-r-3xl bg-[#283a4d5b] scrollbar-hide'>
                     {renderPage()}
                 </div>
             </div>

@@ -50,6 +50,7 @@ function Home() {
             </div>
             
             <div className='grid grid-cols-2 gap-10'>
+              
               {/* Left */}
               <div className='flex flex-col px-4 gap-2'>
                   <Solutions 
@@ -73,8 +74,9 @@ function Home() {
                     isActive={activeIndex === 3}
                     onToggle={() => setActiveIndex(activeIndex === 3 ? -1 : 3)} />
 
-                    <button className='bg-white p-4 w-fit rounded-full'>Join Community</button>
+                    <button className='bg-white hover:bg-gray-300 cursor-pointer transition-all duration-300 p-4 w-fit rounded-full'>Join Community</button>
               </div>
+
               {/* Right */}
               <div className='border-2 border-[#1e3a4f] bg-cover bg-center bg-no-repeat opacity-40 relative group rounded-xl cursor-pointer' style={{backgroundImage: `url(${chipSetImg})`}}>
                 <label 
@@ -82,6 +84,7 @@ function Home() {
                     <FontAwesomeIcon icon={faFolder} className='text-[10rem] text-[#3e79b9]' />
                 </label>
               </div>
+
             </div>
           </div>
           
