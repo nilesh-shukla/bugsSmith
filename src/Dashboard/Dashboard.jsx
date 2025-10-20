@@ -2,6 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEarthAsia, faPeopleLine, faRobot, faSkull, faPlus } from '@fortawesome/free-solid-svg-icons';
 
 import Features from './dashboard-Component/Features';
+import Visualise from './Visualise';
 import ProfileBarChart from './dashboard-Component/ProfileBarChart';
 import ProfilePieChart from './dashboard-Component/ProfilePieChart';
 import ProfileActivity from './dashboard-Component/ProfileActivity';
@@ -27,7 +28,7 @@ const time = [
 function Dashboard() {
   return (
     <div className='relative' >
-      <img src="/dashboard-bg/dashboard.png" alt="" className='absolute opacity-40 w-full h-full z-0' />
+      <img src="/dashboard-bg/dashboard.png" alt="" className='absolute opacity-30 w-full h-full z-0' />
       <div className='relative pl-14 pr-4 py-4'>
         {/* Heading Section */}
         <div className='w-full flex justify-between items-center mb-10'>

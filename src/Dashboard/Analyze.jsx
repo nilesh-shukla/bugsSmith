@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useMemo, useCallback } from "react"
 import Select from 'react-select'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faDownload, faGavel, faL } from "@fortawesome/free-solid-svg-icons"
@@ -6,32 +6,40 @@ import FileReaderSimulator from "./dashboard-Component/FileReaderSimulator"
 import FileFeatureCards from "./dashboard-Component/FileFeatureCards"
 import StraightLineMeter from "./dashboard-Component/StraightLineMeter"
 import SusProfileTable from "./dashboard-Component/SusProfileTable"
+import { p, title } from "framer-motion/client"
+
+const API_URL = 'http://127.0.0.1:8000/batch-predict';
 
 function Analyze() {
 
   const [fileName, setFileName] = useState("Smith Here");
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileContent, setFileContent] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [results, setResults] = useState(null);
+  const [error, setError] = useState(null);
+
+  const defaultResults = {
+    profiles: [],
+    completness_score: 0,
+    completness_total: 7,
+    suspicion_score_average: 0
+  }
+
+  const currentResults = results || defaultResults;
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setFileName(file.name);
       setSelectedFile(file);
-    } else {
+      setError(null);
+      setResults(null); 
+    } 
+    else {
       setFileName("Smith Here");
       setSelectedFile(null);
     }
-  };
-
-  const handleScan = () => {
-    if (!selectedFile) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      setFileContent(event.target.result);
-    };
-    reader.readAsText(selectedFile);
   };
 
   const social = [
@@ -42,97 +50,109 @@ function Analyze() {
   ];
 
   const target = 70;
-  const completness = "5/7";
-  const featureMsg = [
-    // ≤4 (e.g., 2, 3, or 4)	CRITICAL FAILURE	IMPACTED PREDICTION: Fewer than half of the required features were available for analysis. The resulting Suspicion Score is highly unreliable due to severe data gaps. Manual review is MANDATORY.	dot: 'bg-red-600', text: 'text-red-700'
+  const getCompletnessMessage = useCallback((score, total) => {
+    const missing = total - score;
 
-    //5	PARTIAL COVERAGE	BELOW EXPECTATIONS: Prediction utilized partial data. Missing features (e.g., post count or name length) forced the model to impute a value. The confidence score may be slightly suppressed.	dot: 'bg-amber-500', text: 'text-amber-700'
+    if (missing >= 3) {
+      return{
+        title: 'CRITICAL FAILURE',
+        description: `IMPACTED PREDICTION: Very few features were found that could make the Suspicion Score highly unreliable due to severe data gaps. MANUAL REVIEW IS MANDATORY.`,
+        text: 'text-red-700'
+      }
+    }
+    if (missing === 2) {
+      return{
+        title: 'PARTIAL COVERAGE',
+        description: `BELOW EXPECTATIONS: Not all features were found leading to missing features forced the model to impute a safe default value. Confidence may be slightly suppressed.`,
+        text: 'text-amber-700'
+      }
+    }
+    if (missing === 1) {
+      return{
+        title: 'NEAR OPTIMAL',
+        description: `NEAR OPTIMAL: One feature was imputed, resulting in very high, but not perfect, reliability.`,
+        text: 'text-yellow-100'
+      }
+    }
+    return {
+      title: 'OPTIMAL COVERAGE',
+      description: `HIGHLY RELIABLE: The prediction utilized a robust, complete feature set, providing the highest confidence in the risk category.`,
+      text: 'text-green-500'
+    }
+  });
 
-    //6 or 7	OPTIMAL COVERAGE	HIGHLY RELIABLE: The prediction utilized a near-complete or full dataset. The resulting Suspicion Score is based on a robust feature set, providing high confidence in the risk category.	dot: 'bg-sky-600', text: 'text-sky-700'
-  ]
-  const susprofiles = [
-    {
-        status: "CRITICAL",
-        id: "ITBP-JOB-001",
-        platform: "X(Twitter)",
-        filename: "Border_Sector_A_V1.csv",
-    },
-    {
-        status: "BOT",
-        id: "ITBP-JOB-002",
-        name: "YI YUAN BOT",
-        platform: "Facebook",
-        filename: "LWE_Targets_V2.csv",
-    },
-    {
-        status: "CRITICAL",
-        id: "ITBP-JOB-004",
-        platform: "X(Twitter)",
-        filename: "Dormant_Accounts.csv",
-    },
-    {
-        status: "CRITICAL",
-        id: "ITBP-JOB-005",
-        platform: "Facebook",
-        filename: "LWE_Targets_V2.csv",
-    },
-    {
-        status: "GENUINE",
-        id: "ITBP-JOB-006",
-        platform: "Instagram",
-        filename: "Validation_Set_Q3.csv",
-    },
-    {
-        status: "GENUINE",
-        id: "ITBP-JOB-007",
-        platform: "X(Twitter)",
-        filename: "Validation_Set_Q3.csv",
-    },
-    {
-        status: "PENDING",
-        id: "ITBP-JOB-008",
-        platform: "Facebook",
-        filename: "New_Upload_10-14.csv",
-    },
-    {
-        status: "BOT",
-        id: "ITBP-JOB-003",
-        name: "crypto_trader_4890",
-        platform: "Instagram",
-        filename: "Border_Sector_A_V1.csv",
-    },
-    {
-        status: "#INPUT_ERROR",
-        id: "ITBP-JOB-009",
-        platform: "Netlify",
-        filename: "Malformatted_Inputs.csv",
-    },
-    {
-        status: "GENUINE",
-        id: "ITBP-JOB-010",
-        platform: "Instagram",
-        filename: "Validation_Set_Q3.csv",
-    },
-    {
-        status: "BOT",
-        id: "ITBP-JOB-011",
-        name: "YI YUAN BOT",
-        platform: "Facebook",
-        filename: "LWE_Targets_V2.csv",
-    },
-    {
-        status: "CRITICAL",
-        id: "ITBP-JOB-012",
-        platform: "X(Twitter)",
-        filename: "Dormant_Accounts.csv",
-    },
-    {
-        status: "CRITICAL",
-        id: "ITBP-JOB-013",
-        platform: "Facebook",
-        filename: "TWS_Likes_V.csv",
-    },
-  ];
+  const completnessData = useMemo(() => {
+    return getCompletnessMessage(currentResults.completness_score, currentResults.completness_total);
+  }, [currentResults.completness_score, currentResults.completness_total, getCompletnessMessage]);
+
+  const handleScan = async () => {
+    if (!selectedFile) return;
+    const reader = new FileReader();
+    reader.onload = (event) => { setFileContent(event.target.result) };
+    reader.readAsText(selectedFile);
+
+    setLoading(true);
+    setError(null);
+    setResults(null);
+
+    // quick health check before uploading
+    try {
+      const healthUrl = API_URL.replace('/batch-predict', '/health');
+      const healthResp = await fetch(healthUrl, { method: 'GET' });
+      if (!healthResp.ok) {
+        throw new Error(`Backend responded with status ${healthResp.status}`);
+      }
+    } catch (e) {
+      console.error('Backend health check failed:', e);
+      setError(`Cannot reach backend at http://127.0.0.1:8000. Start the Flask server and try again.`);
+      setLoading(false);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+
+    try{
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        body: formData
+      });
+
+      // parse JSON safely
+      let data = null;
+      try {
+        data = await response.json();
+      } catch (parseErr) {
+        throw new Error(`Server returned non-JSON response (status ${response.status})`);
+      }
+
+      if(!response.ok){
+        const errorMsg = data?.details || data?.error || `Server Error (${response.status}).`;
+        throw new Error(errorMsg);
+      }
+
+      const totalScore = (data.profiles || []).reduce((sum, p) => sum + (p.Suspicoin_Score || p.Suspicion_Score || 0), 0);
+      const averageScore = data.profiles && data.profiles.length > 0 ? Math.round(totalScore / data.profiles.length) : 0;
+
+      setResults({
+        profiles: data.profiles || [],
+        completness_score: data.completness_score,
+        completness_total: data.completness_total,
+        suspicion_score_average: averageScore
+      });
+    }
+    catch(err) {
+      console.error("Batch analysis failed:", err);
+      setError(`Analysis Failed: ${err.message}. Ensure the Flask Server is running on port 8000.`);
+    }
+    finally {
+      setLoading(false);
+    }
+  };
+
+  const totalProfilesFound = currentResults.profiles.length;
+  const averageSuspicion = currentResults.suspicion_score_average;
+  const suspicionCountMessage = totalProfilesFound === 0 ? "No profiles exceeded the 30% risk threshold in this batch." : `Found ${totalProfilesFound} profiles requiring immediate action or monitoring.`;
 
   return (
     <div className="relative">
@@ -140,6 +160,15 @@ function Analyze() {
       <div className='relative px-12 py-4 space-y-4 z-20'>
         <h1 className='text-[3rem] text-white font-semibold'>Analyze</h1>
         <p className='text-[#789]'>We analyze digital footprints to separate genuine users from imposters</p>
+
+        {/* Error message for backend being offline */}
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative" role="alert">
+            <strong className="font-semibold">Error: </strong>
+            <span className="block sm:inline">{error}</span>
+          </div>
+        )}
+
         <div className='grid grid-cols-5 gap-4'>
 
           {/* Input Form Field */}
@@ -151,19 +180,22 @@ function Analyze() {
             </div>
             <hr className='text-gray-300 rounded-2xl mb-8' />
             <div className='flex flex-col gap-2'>
+
               {/* File Format Input */}
               <div className='space-y-2'>
                 <h1 className='text-sm text-[#789] leading-tight mb-4'>Smith your file here to decrease the risk of coming across to any digital impersonators</h1>
                 <form action="" className='flex gap-1 '>
                   <label className="flex w-full items-center justify-between border-2 border-gray-400 rounded-lg px-4 py-1 cursor-pointer hover:border-blue-500 transition-colors duration-200">
-                    <input type="file" className="hidden" onChange={handleFileChange} />
+                    <input type="file" className="hidden" onChange={handleFileChange} accept=".csv" />
                     <span className="text-gray-500">{fileName}</span>
                     <div className="flex gap-5">
                       <div className="w-px bg-gray-500 h-6" />
                       <FontAwesomeIcon icon={faDownload} className="text-blue-400 text-xl" />
                     </div>
                   </label>
-                  <button type="button" onClick={handleScan} className="bg-gradient-to-r from-[#66aaed] via-[#4392e0] to-[#137ced] px-3 py-2 rounded-lg text-white hover:scale-105 transition-all duration-200 cursor-pointer shadow">Scan</button>
+                  <button type="button" onClick={handleScan} disabled={loading || !selectedFile} className={`px-3 py-2 rounded-lg text-white transition-all duration-200 cursor-pointer ${loading ? 'bg-blue-200 cursor-not-allowed' : 'bg-gradient-to-r from-[#66aaed] via-[#4392e0] to-[#137ced] hover:scale-105'}`}>
+                    {loading ? 'Scanning...' : 'Scan'}
+                  </button>
                 </form>
               </div>
 
@@ -247,36 +279,55 @@ function Analyze() {
 
         {/* File-Features */}
         <div className="p-6 bg-white rounded-3xl grid grid-cols-2 gap-4">
+
+          {/* Left Column */}
           <div className="space-y-2">
 
             <FileFeatureCards heading={"Model Confidence Score"}>
-              <h1 className="text-[2.8rem] font-semibold mt-1">{target}%</h1>
-              <StraightLineMeter value={target} min={0} max={100} width={700} ticks={10} label="Confidence" />
+              <h1 className="text-[2.8rem] font-semibold mt-1">{averageSuspicion}%</h1>
+              <StraightLineMeter value={averageSuspicion} min={0} max={100} width={700} ticks={10} label="Confidence" />
+              <p className="text-sm text-gray-500">Represents the mean suspicion score of all profiles flagged above the 30% risk threshold.</p>
             </FileFeatureCards>
 
-            <FileFeatureCards heading={"Data Completness"}>
-              <h1 className="text-[2.8rem] font-semibold mt-4">{completness}<span className="text-sm text-[#3c5772] font-normal"> features inside the dataset</span></h1>
-              {/* dot: 'bg-amber-500', text: 'text-amber-700' */}
-              <p className="text-lg text-amber-700 leading-tight"> Prediction utilized partial data. Missing features (e.g., post count or name length) forced the model to impute a value. The confidence score may be slightly suppressed.</p>
+            <FileFeatureCards heading={"Data Integrity & Completness"}>
+              <h1 className="text-[2.8rem] font-semibold mt-4">{currentResults.completness_score}/{currentResults.completness_total}<span className="text-sm text-[#3c5772] font-normal"> ({completnessData.title})</span></h1>   
+              {/* features inside the dataset */}
+              <p className="text-lg text-amber-700 leading-tight">{completnessData.description}</p>
             </FileFeatureCards>
 
           </div>
 
+          {/* Right Column */}
           <FileFeatureCards heading={"Suspicious Profiles"} >
-            <div className="overflow-x-auto scrollbar-hide">
-              <div className="grid grid-cols-4 w-full items-center my-4 font-semibold">
-                <h1>STATUS</h1>
-                <h1>ID</h1>
-                <h1>PLATFORM</h1>
-                <h1>FILE</h1>
-              </div>
-              <div className="space-y-2">
-                {susprofiles.map((profile) => (
-                  <SusProfileTable key={profile.id} status={profile.status} id={profile.id} platform={profile.platform} filename={profile.filename} />
-                ))}
+            <div className="grid grid-cols-4 w-full items-center px-1 py-4 bg-gray-200 font-semibold">
+              <h1>ID</h1>
+              <h1>Name/ Handle</h1>
+              <h1>Score</h1>
+              <h1>Risk</h1>
+            </div>
+            <div className="overflow-y-auto h-[45vh]">
+              <div className="divide-y divide-gray-100">
+                {currentResults.profiles.length > 0 ? (
+                  currentResults.profiles.map((profile) => (
+                    <div key={profile.Profile_ID} className={`grid grid-cols-4 w-full items-center text-sm p-2 transition-colors duration-100 ${profile.Risk_Color === 'red' ? 'bg-red-50 hover:bg-red-100' : profile.Risk_Color === 'amber' ? 'bg-amber-50 hover:bg-amber-100' : profile.Risk_Color === 'yellow' ? 'bg-yellow-50 hover:bg-yellow-100' : 'bg-gray-50 hover:bg-gray-100'}`}>
+                      <span>{profile.Profile_ID || 'N/A'}</span>
+                      <div className="flex flex-col">
+                        <span className="font-medium text-gray-800 text-xs truncate">{profile.Name}</span>
+                        <span className="text-xs text-gray-500 truncate">@{profile.Handle}</span>
+                      </div>
+                      <span className="text-center font-bold text-gray-800 text-xs">{profile.Suspicion_Score}%</span>
+                      <span className={`text-center px-2 py-0.5 text-xs font-semibold rounded-full ${'risk-color-' + profile.Risk_Color}`}>
+                        {profile.Risk_Category}
+                      </span>
+                    </div>
+                  ))
+                ):(
+                  <p className="text-gray-500 text-center">No profiles were flagged as suspicious (Score &gt; 30%) in this batch.</p>
+                )}
               </div>
             </div>
           </FileFeatureCards>
+
         </div>
       </div>
     </div>

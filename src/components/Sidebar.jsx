@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faFileWaveform, faSitemap, faMicroscope, faChartSimple, faGears, faCodeCompare, faIdBadge, faMagnifyingGlassChart, faGear, faCodeMerge  } from '@fortawesome/free-solid-svg-icons';
 import { button } from 'framer-motion/client';
+import { Link } from 'react-router-dom';
 import { icon } from '@fortawesome/fontawesome-svg-core';
 
 function Sidebar({onSelect}) {
@@ -19,7 +20,7 @@ function Sidebar({onSelect}) {
     <div className='w-72 flex flex-col gap-10 rounded-l-3xl bg-[#3568b45d] px-4 py-8 sticky h-full'>
         {/* Title and History */}
         <div className="space-y-8">
-            <h1 className="text-2xl text-gray-300">BugsSmith</h1>
+            <div><Link to="/" ><h1 className="text-2xl text-gray-300">BugsSmith</h1></Link></div>
             <div className="cursor-pointer">
                 <div className="w-full flex justify-between  items-center px-3 py-4 rounded-2xl bg-[#074f978e] hover:scale-105 transition-all duration-200">
                     <div className='text-lg text-white flex items-center'>
