@@ -1,6 +1,6 @@
 import React from 'react'
 
-function FileFeatureCards({className, heading, children}) {
+function FileFeatureCards({className, heading, style, children}) {
   return (
     <div className={`w-full bg-gray-100 rounded-2xl p-4 ${className}`}>
       <h1 className='text-2xl text-[#789] mb-2' style={{fontWeight: 500}}>{heading}</h1>

@@ -1,11 +1,10 @@
-import { useState, useMemo, useCallback } from "react"
+import { useState, useMemo, useCallback, useEffect } from "react"
 import Select from 'react-select'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faDownload, faGavel, faL } from "@fortawesome/free-solid-svg-icons"
+import { faDownload, faGavel, faL, faArrowsRotate } from "@fortawesome/free-solid-svg-icons"
 import FileReaderSimulator from "./dashboard-Component/FileReaderSimulator"
 import FileFeatureCards from "./dashboard-Component/FileFeatureCards"
 import StraightLineMeter from "./dashboard-Component/StraightLineMeter"
-import SusProfileTable from "./dashboard-Component/SusProfileTable"
 import { p, title } from "framer-motion/client"
 
 const API_URL = 'http://127.0.0.1:8000/batch-predict';
@@ -18,6 +17,29 @@ function Analyze() {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState(null);
   const [error, setError] = useState(null);
+
+  // initialize results from sessionStorage so a refresh/tab switch does not clear them
+  useEffect(() => {
+    try {
+      const stored = sessionStorage.getItem('analyze_results');
+      if (stored) {
+        setResults(JSON.parse(stored));
+      }
+    } 
+    catch (e) {}
+  }, []);
+
+  // clear analyze results when the tab/window is closed
+  useEffect(() => {
+    const onBeforeUnload = () => {
+      try { 
+        sessionStorage.removeItem('analyze_results');
+      }
+      catch (e) {}
+    }
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => window.removeEventListener('beforeunload', onBeforeUnload);
+  }, []);
 
   const defaultResults = {
     profiles: [],
@@ -49,14 +71,13 @@ function Analyze() {
     { value: "linkedin", label: "LinkedIn" },
   ];
 
-  const target = 70;
   const getCompletnessMessage = useCallback((score, total) => {
-    const missing = total - score;
+  const missing = total - score;
 
     if (missing >= 3) {
       return{
         title: 'CRITICAL FAILURE',
-        description: `IMPACTED PREDICTION: Very few features were found that could make the Suspicion Score highly unreliable due to severe data gaps. MANUAL REVIEW IS MANDATORY.`,
+        description: `IMPACTED PREDICTION: Very few features were found that could make the Suspicion Score highly unreliable due to severe data gaps hence manual review is mandatory`,
         text: 'text-red-700'
       }
     }
@@ -102,7 +123,8 @@ function Analyze() {
       if (!healthResp.ok) {
         throw new Error(`Backend responded with status ${healthResp.status}`);
       }
-    } catch (e) {
+    } 
+    catch (e) {
       console.error('Backend health check failed:', e);
       setError(`Cannot reach backend at http://127.0.0.1:8000. Start the Flask server and try again.`);
       setLoading(false);
@@ -125,7 +147,6 @@ function Analyze() {
       } catch (parseErr) {
         throw new Error(`Server returned non-JSON response (status ${response.status})`);
       }
-
       if(!response.ok){
         const errorMsg = data?.details || data?.error || `Server Error (${response.status}).`;
         throw new Error(errorMsg);
@@ -140,6 +161,17 @@ function Analyze() {
         completness_total: data.completness_total,
         suspicion_score_average: averageScore
       });
+      try { 
+        sessionStorage.setItem('analyze_results', JSON.stringify(
+          {
+            profiles: data.profiles || [],
+            completness_score: data.completness_score,
+            completness_total: data.completness_total,
+            suspicion_score_average: averageScore
+          }
+        )); 
+      } 
+      catch (e) {}
     }
     catch(err) {
       console.error("Batch analysis failed:", err);
@@ -154,12 +186,33 @@ function Analyze() {
   const averageSuspicion = currentResults.suspicion_score_average;
   const suspicionCountMessage = totalProfilesFound === 0 ? "No profiles exceeded the 30% risk threshold in this batch." : `Found ${totalProfilesFound} profiles requiring immediate action or monitoring.`;
 
+  // allow explicit refresh/clear from UI to unmount current results
+  const handleRefresh = () => {
+    try { 
+      sessionStorage.removeItem('analyze_results'); 
+    }
+    catch (e) {}
+    setResults(null);
+    setError(null);
+    setFileContent("");
+    setFileName('Smith Here');
+    setSelectedFile(null);
+  }
+
   return (
     <div className="relative">
-      <img src="/dashboard-bg/analyze.png" className='absolute opacity-10 w-fit h-full z-0 object-cover' />
+      <img src="/dashboard-bg/dashboard.png" className='absolute opacity-30 w-full h-full z-0 object-cover' />
       <div className='relative px-12 py-4 space-y-4 z-20'>
-        <h1 className='text-[3rem] text-white font-semibold'>Analyze</h1>
-        <p className='text-[#789]'>We analyze digital footprints to separate genuine users from imposters</p>
+        <div className='flex justify-between items-center mb-6 w-full'>
+          <div>
+            <h1 className="text-[3rem] text-white font-semibold">Analyze</h1>
+            <p className="text-[#789]">We analyze digital footprints to separate genuine users from imposters.</p>
+          </div>
+          <button className='flex gap-1 px-3 py-2 justify-between items-center bg-[#06539f] cursor-pointer hover:bg-blue-400 transition-all duration-150 text-white rounded-xl w-36 text-lg' onClick={handleRefresh}>
+            Refresh
+            <FontAwesomeIcon icon={faArrowsRotate} />
+          </button>
+        </div>
 
         {/* Error message for backend being offline */}
         {error && (
@@ -175,7 +228,7 @@ function Analyze() {
           <div className='flex flex-col col-span-2 rounded-4xl p-6 bg-white' id='input-field'>
             <div className='flex justify-between items-center mb-3'>
               <img src="/web-logo.png" className='w-8 h-8' />
-              <h1 className='audiowide-font text-3xl text-[#789]'>
+                <h1 className='audiowide-font text-3xl text-[#789]'>
                 <span className='bg-gradient-to-r from-[#2d92f7] via-[#47729d] to-[#65819d] bg-clip-text text-transparent'>Bugs</span>Smith</h1>
             </div>
             <hr className='text-gray-300 rounded-2xl mb-8' />
@@ -278,35 +331,37 @@ function Analyze() {
         </div>
 
         {/* File-Features */}
-        <div className="p-6 bg-white rounded-3xl grid grid-cols-2 gap-4">
+        <div className="p-6 bg-white rounded-3xl grid grid-cols-2 gap-4 items-stretch">
 
           {/* Left Column */}
-          <div className="space-y-2">
+          <div className="flex flex-col gap-2 h-full">
 
             <FileFeatureCards heading={"Model Confidence Score"}>
-              <h1 className="text-[2.8rem] font-semibold mt-1">{averageSuspicion}%</h1>
-              <StraightLineMeter value={averageSuspicion} min={0} max={100} width={700} ticks={10} label="Confidence" />
-              <p className="text-sm text-gray-500">Represents the mean suspicion score of all profiles flagged above the 30% risk threshold.</p>
+              <p className="text-sm text-gray-500 mt-4">Represents the mean suspicion score of all profiles flagged above the 30% risk threshold.</p>
+                <h1 className="text-[2.8rem] font-semibold">{averageSuspicion}% <span className="text-sm text-blue-400 font-normal">Confidence</span></h1>
+              <StraightLineMeter value={averageSuspicion} min={0} max={100} width={700} ticks={10} />
             </FileFeatureCards>
 
             <FileFeatureCards heading={"Data Integrity & Completness"}>
               <h1 className="text-[2.8rem] font-semibold mt-4">{currentResults.completness_score}/{currentResults.completness_total}<span className="text-sm text-[#3c5772] font-normal"> ({completnessData.title})</span></h1>   
               {/* features inside the dataset */}
-              <p className="text-lg text-amber-700 leading-tight">{completnessData.description}</p>
+              <p className={`text-lg ${completnessData.text} leading-tight`}>{completnessData.description}</p>
             </FileFeatureCards>
 
           </div>
 
           {/* Right Column */}
-          <FileFeatureCards heading={"Suspicious Profiles"} >
-            <div className="grid grid-cols-4 w-full items-center px-1 py-4 bg-gray-200 font-semibold">
+          <div className="flex flex-col h-full">
+            <FileFeatureCards heading={"Suspicious Profiles"} className={"flex flex-col flex-1"}>
+            <div className="grid grid-cols-4 w-full items-center px-2 py-4 bg-gray-200 font-semibold">
               <h1>ID</h1>
               <h1>Name/ Handle</h1>
               <h1>Score</h1>
               <h1>Risk</h1>
             </div>
-            <div className="overflow-y-auto h-[45vh]">
-              <div className="divide-y divide-gray-100">
+            {/* Internal table content */}
+            <div className="overflow-y-auto h-[38vh]">
+              <div className="divide-y divide-gray-100 h-full">
                 {currentResults.profiles.length > 0 ? (
                   currentResults.profiles.map((profile) => (
                     <div key={profile.Profile_ID} className={`grid grid-cols-4 w-full items-center text-sm p-2 transition-colors duration-100 ${profile.Risk_Color === 'red' ? 'bg-red-50 hover:bg-red-100' : profile.Risk_Color === 'amber' ? 'bg-amber-50 hover:bg-amber-100' : profile.Risk_Color === 'yellow' ? 'bg-yellow-50 hover:bg-yellow-100' : 'bg-gray-50 hover:bg-gray-100'}`}>
@@ -315,19 +370,23 @@ function Analyze() {
                         <span className="font-medium text-gray-800 text-xs truncate">{profile.Name}</span>
                         <span className="text-xs text-gray-500 truncate">@{profile.Handle}</span>
                       </div>
-                      <span className="text-center font-bold text-gray-800 text-xs">{profile.Suspicion_Score}%</span>
-                      <span className={`text-center px-2 py-0.5 text-xs font-semibold rounded-full ${'risk-color-' + profile.Risk_Color}`}>
+                      <span className="font-bold text-gray-800 text-xs">{profile.Suspicion_Score}%</span>
+                      <span className={`py-0.5 text-xs font-semibold rounded-full ${'risk-color-' + profile.Risk_Color}`}>
                         {profile.Risk_Category}
                       </span>
                     </div>
                   ))
                 ):(
-                  <p className="text-gray-500 text-center">No profiles were flagged as suspicious (Score &gt; 30%) in this batch.</p>
+                  <div className="flex h-full justify-center items-center">
+                    <p className="text-gray-500 text-xs text-center">No profiles were flagged as suspicious (Score &gt; 30%) in this batch.</p>
+                  </div>
                 )}
               </div>
             </div>
           </FileFeatureCards>
 
+          </div>
+          
         </div>
       </div>
     </div>

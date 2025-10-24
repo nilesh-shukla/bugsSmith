@@ -8,7 +8,6 @@ function StraightLineMeter({
     height = 14,
     ticks = 4,
     showValue = true,
-    label = "",
     trackColor = '#e6eef8',
 }) 
 {
@@ -85,7 +84,6 @@ function StraightLineMeter({
 
     return (
         <div className="w-full">
-            {label && <div className="mb-2 text-sm text-[#097bed]">{label}</div>}
 
             <svg
                 width="100%"
@@ -95,7 +93,6 @@ function StraightLineMeter({
                 style={{ display: 'block' }}
                 xmlns="http://www.w3.org/2000/svg"
                 role="img"
-                aria-label={label || 'meter'}
             >
                 {/* background track */}
                 <rect

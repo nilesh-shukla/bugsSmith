@@ -1,75 +1,97 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { ScatterChart, Scatter, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer} from 'recharts';
 
+const VIZ_URL = 'http://127.0.0.1:8000/viz-data';
 
-function Visualise() {
-  const genuineData = [
-    { followers: 150, following: 130 },
-    { followers: 420, following: 400 },
-    { followers: 860, following: 870 },
-    { followers: 230, following: 200 },
-    { followers: 720, following: 690 },
-  ];
+function Visualise({vizData: initialVizData = null}) {
 
-  const fakeData = [
-    { followers: 10, following: 800 },
-    { followers: 20, following: 900 },
-    { followers: 5, following: 600 },
-    { followers: 50, following: 700 },
-    { followers: 15, following: 1000 },
-  ];
+  const [vizData, setVizData] = useState(() => {
+    try {
+      if (initialVizData) return initialVizData;
+      const stored = sessionStorage.getItem('viz_data');
+      return stored ? JSON.parse(stored) : null;
+    } 
+    catch (e) {
+      return null;
+    }
+  })
+  const [loading, setLoading] = useState(false);
 
-  const profilePicData = [
-    { label: "Has Picture", Genuine: 88, Fake: 22 },
-    { label: "No Picture", Genuine: 12, Fake: 78 },
-  ];
+  useEffect(() => {
+    if (initialVizData) return;
+    let isMounted = true;
+    setLoading(true);
+    fetch(VIZ_URL)
+      .then((r) => {
+        if (!r.ok) throw new Error('No visual data yet');
+        return r.json();
+      }).then((json) => {
+        if (isMounted) {
+          setVizData(json);
+          try { 
+            sessionStorage.setItem('viz_data', JSON.stringify(json)); 
+          }
+          catch(e) {}
+        }
+      }).catch(() => {
+        if (isMounted) setVizData(null);
+      }).finally(() => {
+        if (isMounted) setLoading(false);
+        isMounted = false;
+      })
+  }, [initialVizData])
 
-  const activityData = [
-    { range: "0-10", Genuine: 5, Fake: 60 },
-    { range: "10-50", Genuine: 20, Fake: 25 },
-    { range: "50-200", Genuine: 40, Fake: 10 },
-    { range: "200-1000", Genuine: 25, Fake: 4 },
-    { range: "1000+", Genuine: 10, Fake: 1 },
-  ];
+  // clear viz snapshot when the tab/window is closed
+  useEffect(() => {
+    const onBeforeUnload = () => {
+      try { 
+        sessionStorage.removeItem('viz_data'); 
+      }
+      catch (e) {}
+    }
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => window.removeEventListener('beforeunload', onBeforeUnload);
+  }, []);
 
-  const freshnessData = [
-    { month: "Jan 2024", Genuine: 20, Fake: 10 },
-    { month: "Feb 2024", Genuine: 25, Fake: 15 },
-    { month: "Mar 2024", Genuine: 18, Fake: 150 },
-    { month: "Apr 2024", Genuine: 22, Fake: 200 },
-    { month: "May 2024", Genuine: 28, Fake: 80 },
-    { month: "Jun 2024", Genuine: 30, Fake: 40 },
-  ];
+  const data = {
+    genuineData: (vizData && vizData.genuineData) ? vizData.genuineData : [],
+    fakeData: (vizData && vizData.fakeData) ? vizData.fakeData : [],
+    profilePicData: (vizData && vizData.profilePicData) ? vizData.profilePicData : [],
+    activityData: (vizData && vizData.activityData) ? vizData.activityData : [],
+    genuinePrivacy: (vizData && vizData.genuinePrivacy) ? vizData.genuinePrivacy : [],
+    fakePrivacy: (vizData && vizData.fakePrivacy) ? vizData.fakePrivacy : [],
+    featureImportance: (vizData && vizData.featureImportance) ? vizData.featureImportance : [],
+  }
 
-  const genuinePrivacy = [
-    { name: "Protected", value: 15 },
-    { name: "Public", value: 85 },
-  ];
-
-  const fakePrivacy = [
-    { name: "Protected", value: 65 },
-    { name: "Public", value: 35 },
-  ];
-  const gPrivacyTotal = genuinePrivacy.reduce((s, e) => s + (e.value || 0), 0) || 1;
-  const fPrivacyTotal = fakePrivacy.reduce((s, e) => s + (e.value || 0), 0) || 1;
-  
-  const featureImportance = [
-    { feature: "Follower_Ratio", importance: 0.38 },
-    { feature: "statuses_count", importance: 0.25 },
-    { feature: "following_count", importance: 0.15 },
-    { feature: "default_profile_image", importance: 0.10 },
-    { feature: "protected", importance: 0.07 },
-    { feature: "verified", importance: 0.03 },
-    { feature: "account_age_days", importance: 0.02 },
-  ];
-
+  const gPrivacyTotal = data.genuinePrivacy.reduce((s, e) => s+ (e.value || 0), 0) || 1;
+  const fPrivacyTotal = data.fakePrivacy.reduce((s, e) => s+ (e.value || 0), 0) || 1;
 
   return (
     <div className="relative">
-      <img src="/dashboard-bg/visual.png" className='absolute opacity-15 w-full h-full z-0 object-cover' />
+
+      <img src="/dashboard-bg/dashboard.png" className='absolute opacity-30 w-full h-full z-0 object-cover' />
+
       <div className="relative px-8 py-6">
-        <h1 className="text-[3rem] text-white font-semibold">Visualise</h1>
-        <p className="text-[#789] mb-6">A concise view of dataset distributions and relationships.</p>
+        <div className='flex justify-between items-center mb-6 w-full'>
+          <div>
+            <h1 className="text-[3rem] text-white font-semibold">Visualise</h1>
+            <p className="text-[#789]">A concise view of dataset distributions and relationships.</p>
+          </div>
+          <button
+            className='flex gap-1 px-3 py-2 justify-between items-center bg-[#06539f] cursor-pointer hover:bg-blue-400 transition-all duration-150 text-white rounded-xl w-36 text-lg' onClick={() => {
+              try { 
+                sessionStorage.removeItem('viz_data');
+              } 
+              catch (e) {}
+              setVizData(null);
+            }}
+          >
+            Refresh
+            <FontAwesomeIcon icon={faArrowsRotate} />
+          </button>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
@@ -82,15 +104,20 @@ function Visualise() {
               </div>
             </div>
 
-            <ResponsiveContainer width="100%" height={300}>
-              <ScatterChart>
-                <CartesianGrid stroke="#f3f4f6" />
-                <XAxis dataKey={"following"} name="Following" tick={{ fill: '#8b939c' }} />
-                <YAxis dataKey={"followers"} name="Followers" tick={{ fill: '#8b939c' }} />
-                <Tooltip cursor={{ stroke: '#e6edf3' }} />
-                <Scatter name="Genuine" data={genuineData} fill="#06b6d4" />
-              </ScatterChart>
-            </ResponsiveContainer>
+            { (data.genuineData.length === 0 && data.fakeData.length === 0) ? (
+              <div className="h-72 flex items-center justify-center text-gray-400">No data yet</div>
+            ) : (
+              <ResponsiveContainer width="100%" height={300}>
+                <ScatterChart>
+                  <CartesianGrid stroke="#f3f4f6" />
+                  <XAxis dataKey={"friends_count"} name="Following" tick={{ fill: '#8b939c' }} />
+                  <YAxis dataKey={"followers_count"} name="Followers" tick={{ fill: '#8b939c' }} />
+                  <Tooltip cursor={{ stroke: '#e6edf3' }} />
+                  <Scatter name="Genuine" data={data.genuineData} fill="#06b6d4" />
+                  <Scatter name="Fake" data={data.fakeData} fill="#ff6347" />
+                </ScatterChart>
+              </ResponsiveContainer>
+            )}
           </div>
 
           {/* Profile picture distribution (stacked bars) */}
@@ -102,8 +129,11 @@ function Visualise() {
               </div>
             </div>
 
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={profilePicData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+            { data.profilePicData.length === 0 ? (
+              <div className="h-72 flex items-center justify-center text-gray-400">No data yet</div>
+            ) : (
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={data.profilePicData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="genuineGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#4A90E2" stopOpacity={0.9} />
@@ -132,39 +162,10 @@ function Visualise() {
                 <Bar dataKey={"Fake"} stackId={"a"} fill="url(#fakeGrad)" />
               </BarChart>
             </ResponsiveContainer>
+            )}
           </div>
 
-          {/* Freshness over time */}
-          <div className="bg-white w-full p-4 rounded-3xl">
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <h2 className="text-lg font-semibold">Account Freshness</h2>
-                <div className="text-sm text-gray-500">New accounts over time by type</div>
-              </div>
-            </div>
-
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={freshnessData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-                <CartesianGrid stroke="#f3f4f6" />
-                <XAxis dataKey={"month"} tick={{ fill: '#8b939c' }} />
-                <YAxis />
-                <Tooltip content={({ payload }) => {
-                  if (!payload || payload.length === 0) return null;
-                  const d = payload[0].payload;
-                  return (
-                    <div style={{ background: 'whitesmoke', padding: 8, borderRadius: 6 }}>
-                      <div className="font-semibold text-[#31485f]">{d.month}</div>
-                      <div style={{ color: '#1E90FF' }}>Genuine: {d.Genuine}</div>
-                      <div style={{ color: '#FF6347' }}>Fake: {d.Fake}</div>
-                    </div>
-                  )
-                }} />
-                <Legend />
-                <Bar dataKey={"Genuine"} fill="#1E90FF" />
-                <Bar dataKey={"Fake"} fill="#FF6347" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+          <div></div>
 
           {/* Privacy pie charts */}
           <div className="bg-white w-full p-4 rounded-3xl">
@@ -178,19 +179,23 @@ function Visualise() {
             <div className="grid grid-cols-2 gap-6 items-center">
               <div className="flex flex-col items-center">
                 <h3 className="text-center text-sm font-semibold">Genuine — Privacy Distribution</h3>
-                <ResponsiveContainer width="100%" height={200}>
-                  <PieChart>
-                    <Pie data={genuinePrivacy} dataKey="value" cx="45%" cy="50%" outerRadius={70}>
-                      {genuinePrivacy.map((entry, idx) => (
-                        <Cell key={idx} fill={idx === 0 ? '#06b6d4' : '#0ea5a4'} />
-                      ))}
-                    </Pie>
-                  </PieChart>
-                </ResponsiveContainer>
+                { data.genuinePrivacy.length === 0 ? (
+                  <div className="h-48 flex items-center justify-center text-gray-400">No data yet</div>
+                ) : (
+                  <ResponsiveContainer width="100%" height={200}>
+                    <PieChart>
+                      <Pie data={data.genuinePrivacy} dataKey="value" cx="45%" cy="50%" outerRadius={70}>
+                        {data.genuinePrivacy.map((entry, idx) => (
+                          <Cell key={idx} fill={idx === 0 ? '#06b6d4' : '#0ea5a4'} />
+                        ))}
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                )}
 
                 {/* legend for genuine pie */}
                 <div className="mt-3 flex flex-col items-center gap-2 w-full text-sm">
-                  {genuinePrivacy.map((p, i) => (
+                  {data.genuinePrivacy.map((p, i) => (
                     <div key={i} className="flex items-center gap-3">
                       <span style={{ background: i === 0 ? '#06b6d4' : '#0ea5a4' }} className="w-3 h-3 rounded-sm inline-block" />
                       <span className="text-gray-700 w-24">{p.name}</span>
@@ -202,19 +207,23 @@ function Visualise() {
 
               <div className="flex flex-col items-center">
                 <h3 className="text-center text-sm font-semibold">Fake — Privacy Distribution</h3>
-                <ResponsiveContainer width="100%" height={200}>
-                  <PieChart>
-                    <Pie data={fakePrivacy} dataKey="value" cx="50%" cy="50%" outerRadius={70}>
-                      {fakePrivacy.map((entry, idx) => (
-                        <Cell key={idx} fill={idx === 0 ? '#fb923c' : '#f97316'} />
-                      ))}
-                    </Pie>
-                  </PieChart>
-                </ResponsiveContainer>
+                { data.fakePrivacy.length === 0 ? (
+                  <div className="h-48 flex items-center justify-center text-gray-400">No data yet</div>
+                ) : (
+                  <ResponsiveContainer width="100%" height={200}>
+                    <PieChart>
+                      <Pie data={data.fakePrivacy} dataKey="value" cx="50%" cy="50%" outerRadius={70}>
+                        {data.fakePrivacy.map((entry, idx) => (
+                          <Cell key={idx} fill={idx === 0 ? '#fb923c' : '#f97316'} />
+                        ))}
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                )}
 
                 {/* legend for fake pie */}
                 <div className="mt-3 flex flex-col items-center gap-2 w-full text-sm">
-                  {fakePrivacy.map((p, i) => (
+                  {data.fakePrivacy.map((p, i) => (
                     <div key={i} className="flex items-center gap-3">
                       <span style={{ background: i === 0 ? '#fb923c' : '#f97316' }} className="w-3 h-3 rounded-sm inline-block" />
                       <span className="text-gray-700 w-24">{p.name}</span>
@@ -235,8 +244,11 @@ function Visualise() {
               </div>
             </div>
 
-            <ResponsiveContainer width="100%" height={340}>
-              <BarChart layout="vertical" data={featureImportance} margin={{ left: 80 }}>
+            { data.featureImportance.length === 0 ? (
+              <div className="h-80 flex items-center justify-center text-gray-400">No data yet</div>
+            ) : (
+              <ResponsiveContainer width="100%" height={340}>
+                <BarChart layout="vertical" data={data.featureImportance} margin={{ left: 80 }}>
                 <XAxis type="number" tick={{ fill: '#8b939c' }} />
                 <YAxis type="category" dataKey="feature" tick={{ fill: '#374151' }} width={180} />
                 <Tooltip content={({ payload }) => {
@@ -250,6 +262,7 @@ function Visualise() {
                 <Bar dataKey={"importance"} fill="#4682B4" />
               </BarChart>
             </ResponsiveContainer>
+            )}
           </div>
 
         </div>
