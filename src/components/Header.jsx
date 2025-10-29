@@ -7,8 +7,10 @@ import { Link } from 'react-router-dom';
 function Header() {
   return (
     <div className='w-auto'>
-      <img src="/header-background.png" alt="logoimage" className='animate-spin-slow absolute w-72 xl:w-4xl xl:bottom-1/4 xl:top-auto top-1/4 xl:left-1/2 blur-2xl' />
-      <div className='grid grid-rows-1 grid-cols-1 md:grid-cols-1 md:grid-rows-2 xl:grid-rows-1 xl:grid-cols-2 gap-y-8 xl:gap-2'>
+
+      <img src="/header-background.png" alt="logoimage" className='animate-spin-slow absolute w-72 xl:w-4xl top-1/4 xl:bottom-1/4 xl:top-auto md:left-1/4 xl:left-1/2 blur-2xl overflow-hidden -z-10' />
+
+      <div className='grid grid-rows-1 grid-cols-1 md:grid-cols-1 md:grid-rows-2 xl:grid-rows-1 xl:grid-cols-2 gap-y-8 xl:gap-2 z-10'>
 
         <div className='flex flex-col gap-4 xl:gap-6'>
           <div className='border items-center border-[#0095ba] w-fit rounded-full px-3 py-2'>

@@ -24,7 +24,6 @@ function AppRoutes() {
   if (loading) return <Loader />;
 
   // Normally we would keep this return statement inside App() function but due to "useLocation()" which is used as a router, we need to keep the rouoting outside for it to render inside.
-
   return (
     <Routes>
       <Route element={<LayoutWithNav />}>
