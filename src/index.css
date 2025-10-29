@@ -2,13 +2,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Audiowide&display=swap');
 @import "tailwindcss";
 
+/* * {
+  outline: 1px solid red;
+} */
+
+
 body {
-    font-family: "Instrument Sans", sans-serif;
-    font-optical-sizing: auto;
-    font-style: normal;
-    font-variation-settings: "wdth" 100;
-    background-color: #011327ef;
-    overflow-x: hidden;
+  font-family: "Instrument Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+  background-color: #011327ef;
+  overflow-x: hidden;
 }
 
 .outfit-font {

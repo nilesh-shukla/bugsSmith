@@ -22,9 +22,9 @@ function Navigation() {
   };
 
   return (
-    <div className='fixed inset-0 w-full py-4 h-fit z-[999]'>
-      <div className="w-full flex justify-center items-center">
-        <nav className="flex items-center gap-8 px-8 py-4 rounded-full backdrop-blur-xl bg-blue-400/15">
+    <div className='fixed inset-0 w-screen py-4 h-fit z-[999]'>
+      <div className="w-full px-4 lg:px-0 flex justify-center items-center">
+        <nav className="flex w-full lg:w-auto justify-between items-center gap-8 px-8 py-4 rounded-full backdrop-blur-xl bg-blue-400/15">
 
           {/* Logo */}
           <Link to={"/"}>

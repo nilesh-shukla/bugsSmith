@@ -6,18 +6,18 @@ import { Link } from 'react-router-dom';
 
 function Header() {
   return (
-    <div className='w-screen z-0'>
-      <img src="/header-background.png" alt="logoimage" className='animate-spin-slow absolute w-4xl bottom-1/4 left-1/2 blur-2xl' />
-      <div className='grid xl:grid-cols-2 gap-2'>
+    <div className='w-auto'>
+      <img src="/header-background.png" alt="logoimage" className='animate-spin-slow absolute w-72 xl:w-4xl xl:bottom-1/4 xl:top-auto top-1/4 xl:left-1/2 blur-2xl' />
+      <div className='grid grid-rows-1 grid-cols-1 md:grid-cols-1 md:grid-rows-2 xl:grid-rows-1 xl:grid-cols-2 gap-y-8 xl:gap-2'>
 
-        <div className='flex flex-col gap-6'>
+        <div className='flex flex-col gap-4 xl:gap-6'>
           <div className='border items-center border-[#0095ba] w-fit rounded-full px-3 py-2'>
-            <h1 className='text-[#0095ba] text-sm'>
+            <h1 className='text-[#0095ba] lg:text-sm text-xs'>
               <FontAwesomeIcon icon={faCircleDot} className='mr-2 text-blue-300' />
               AI-Powered solution tools
             </h1>
           </div>
-          <h1 className='text-white text-[4.7em] outfit-font leading-19'>Secure Your Space! Eliminate Imposters</h1>
+          <h1 className='text-white text-[3em] lg:text-[3.6em] xl:text-[4.7em] outfit-font leading-15 lg:leading-17 xl:leading-19'>Secure Your Space! Eliminate Imposters</h1>
           <p className='text-[#7cb2c0]'>Maximize security with AI that detects fake accounts, prevents fraud in real time, and ensures trusted user experience</p>
           <div className='flex gap-4 outfit-font'>
             <Link to={'/analyze'}>
@@ -43,7 +43,7 @@ function Header() {
           </div>
         </div>
 
-        <ImageStack />
+        <ImageStack className={"hidden md:block"} />
 
       </div>
     </div>

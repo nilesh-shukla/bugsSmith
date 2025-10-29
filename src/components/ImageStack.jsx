@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
-function ImageStack() {
+function ImageStack({className}) {
     const [images, setImages] = useState([
         '/StackImage/stackImg-1.png',
         '/StackImage/stackImg-2.png',
@@ -39,7 +39,7 @@ function ImageStack() {
     }, [isAutoPlay, isAnimating]);
 
     return (
-        <div className='relative w-full h-full'>
+        <div className={`relative w-full h-full md:overflow-x-hidden overflow-x-auto scrollbar-hide ${className}`}>
             {images.map((img, index) => (
                 <div
                     key={img}
