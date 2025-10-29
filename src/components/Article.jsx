@@ -3,9 +3,9 @@ import React from 'react'
 function Article({className, image, title, heading, description, link}) {
   return (
     <div className={`flex flex-col gap-6 group hover:cursor-pointer rounded-xl overflow-hidden ${className}`}>
-      <a href={link}>
+      <a href={link} target='blank'>
         <div className='w-full rounded-xl border border-[#1e3a4f] overflow-hidden'>
-            <img src={image} className='w-full scale-100 group-hover:scale-110 transition-transform duration-300 h-70' />
+            <img src={image} className='w-full scale-100 group-hover:scale-110 transition-transform duration-300 h-80' />
         </div>
         <div className='flex flex-col gap-1'>
             <h1 className='text-[#2f6893]'>{title}</h1>

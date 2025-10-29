@@ -39,7 +39,7 @@ function ImageStack({className}) {
     }, [isAutoPlay, isAnimating]);
 
     return (
-        <div className={`relative w-full h-full md:overflow-x-hidden overflow-x-auto scrollbar-hide ${className}`}>
+        <div className={`relative w-full h-full md:overflow-x-hidden overflow-y-hidden pointer-events-none scrollbar-hide ${className}`}>
             {images.map((img, index) => (
                 <div
                     key={img}

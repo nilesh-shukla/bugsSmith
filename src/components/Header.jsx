@@ -26,10 +26,12 @@ function Header() {
                 <FontAwesomeIcon icon={faWandMagicSparkles} className='ml-2'/>
               </button>
             </Link>
-            <button className='bg-transparent cursor-pointer p-4 rounded-full border border-[#7cb2c0] text-white hover:bg-white hover:border-white hover:text-[#35a0bb] transition-all duration-200'>
-              How we Work
-              <FontAwesomeIcon icon={faBriefcase} className='ml-2'/>
-            </button>
+            <Link to={'/about'}>
+              <button className='bg-transparent cursor-pointer p-4 rounded-full border border-[#7cb2c0] text-white hover:bg-white hover:border-white hover:text-[#35a0bb] transition-all duration-200'>
+                How we Work
+                <FontAwesomeIcon icon={faBriefcase} className='ml-2'/>
+              </button>
+            </Link>
           </div>
           <div className='flex items-center gap-3'>
             <h1 className='text-xl text-[#9ebdc3] outfit-font'>Trustpilot:</h1>

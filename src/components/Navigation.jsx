@@ -84,14 +84,14 @@ function Navigation() {
                 }
               }}
             >
-                  {['Solutions', 'About Us', 'Resources', 'Integrations', 'Contact Us'].map((item) => (
+                  {['Solutions', 'About', 'Resources', 'Integrations', 'Contact'].map((item) => (
                 <motion.li 
                   key={item}
                   variants={itemVariants}
                   className="w-full"
                 >
                   <Link 
-                    to={`/${item.toLowerCase().replace(' ', '-')}`}
+                    to={`/${item.toLowerCase()}`}
                     className="block w-full py-2 hover:text-blue-500 transition-colors"
                     onClick={() => setIsOpen(false)}
                   >
