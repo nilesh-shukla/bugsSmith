@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 function AboutValues({className, icon, heading, describe}) {
   return (
-    <div className='flex flex-col gap-2 w-1/6 items-center text-center'>
+    <div className='flex flex-col gap-2 items-center text-center'>
         <div className='bg-blue '>
             <FontAwesomeIcon icon={icon} className='text-[3rem] text-[#0f76a2]' />
         </div>

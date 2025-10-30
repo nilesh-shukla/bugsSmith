@@ -24,11 +24,12 @@ function Navigation() {
   return (
     <div className='fixed inset-0 w-screen py-4 h-fit z-[999]'>
       <div className="w-full px-4 lg:px-0 flex justify-center items-center">
-        <nav className="flex w-full lg:w-auto justify-between items-center gap-8 px-8 py-4 rounded-full backdrop-blur-xl bg-blue-400/15">
+        <nav className="flex w-full lg:w-auto justify-between items-center gap-8 px-4 xl:px-8 py-4 rounded-full backdrop-blur-xl bg-blue-400/15">
 
           {/* Logo */}
-          <Link to={"/"}>
-          <img src="/web-logo.png" alt="Logo" className="w-10" />
+          <Link to={"/"} className='flex items-center gap-1'>
+            <img src="/web-logo.png" alt="Logo" className="w-8 lg:w-10" />
+            <h1 className='block xl:hidden text-2xl text-[#789] kode-font font-semibold'>Bugs<span className='text-[#6b90b4]'>Smith</span></h1>
           </Link>
 
           {/* Options */}
@@ -68,14 +69,14 @@ function Navigation() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed top-[60px] left-0 w-full bg-white xl:hidden z-[9998] overflow-hidden"
+            className="fixed top-24 left-0 w-full backdrop-blur-3xl rounded-2xl xl:hidden z-[9998] overflow-hidden"
             variants={menuVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
           >
             <motion.ul 
-              className="flex flex-col items-start px-5 gap-6 py-6 text-black font-isans"
+              className="flex flex-col gap-2 outfit-font px-5 py-4 text-[#ace0f1] font-isans"
               initial="hidden"
               animate="visible"
               variants={{

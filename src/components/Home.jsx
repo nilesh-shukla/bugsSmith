@@ -17,7 +17,7 @@ import Footer from './Footer'
 function Home() {
   const [activeIndex, setActiveIndex] = useState(0);
   return (
-    <div className='flex flex-col gap-y-14 lg:gap-y-20 xl:gap-y-32 xl:px-12 lg:px-8 px-4 pt-35 pb-15'>
+    <div className='w-screen flex flex-col gap-y-14 lg:gap-y-20 xl:gap-y-32 xl:px-12 lg:px-8 px-4 pt-35 pb-15'>
 
         <Header />
 
