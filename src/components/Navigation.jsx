@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleDown, faEllipsisV, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faAngleDown, faEllipsisV, faTimes, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons';
 
 function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,8 +23,8 @@ function Navigation() {
 
   return (
     <div className='fixed inset-0 w-screen py-4 h-fit z-[999]'>
-      <div className="w-full px-4 lg:px-0 flex justify-center items-center">
-        <nav className="flex w-full lg:w-auto justify-between items-center gap-8 px-4 xl:px-8 py-4 rounded-full backdrop-blur-xl bg-blue-400/15">
+      <div className="w-full px-4 xl:px-0 flex justify-center items-center">
+        <nav className="flex w-full xl:w-auto justify-between items-center gap-8 px-4 xl:px-8 py-4 rounded-full backdrop-blur-xl bg-blue-400/15">
 
           {/* Logo */}
           <Link to={"/"} className='flex items-center gap-1'>
@@ -41,9 +41,12 @@ function Navigation() {
               <FontAwesomeIcon icon={faAngleDown} className='ml-1 text-[#0098cf] transform transition-transform duration-300 group-hover:rotate-180' />
               {/* Menu for Solutions */}
               <div className='opacity-0 absolute top-14 group-hover:opacity-100 duration-300 rounded-2xl p-6 bg-[#004c94] text-[#9ebedf]'>
-                <ul>
+                <ul className='space-y-4'>
                   <li className='hover:text-white hover:cursor-pointer'>
                     <Link to="/solutions">Solutions for Industries</Link>
+                  </li>
+                  <li className='hover:text-white hover:cursor-pointer'>
+                    <Link to="/analyze">Analyze</Link>
                   </li>
                 </ul>
               </div>
@@ -69,14 +72,14 @@ function Navigation() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed top-24 left-0 w-full backdrop-blur-3xl rounded-2xl xl:hidden z-[9998] overflow-hidden"
+            className="fixed px-5 py-4 top-24 left-0 w-full backdrop-blur-3xl rounded-2xl xl:hidden z-[9998] overflow-hidden"
             variants={menuVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
           >
             <motion.ul 
-              className="flex flex-col gap-2 outfit-font px-5 py-4 text-[#ace0f1] font-isans"
+              className="flex flex-col gap-2 outfit-font text-[#ace0f1] font-isans"
               initial="hidden"
               animate="visible"
               variants={{
@@ -85,7 +88,7 @@ function Navigation() {
                 }
               }}
             >
-                  {['Solutions', 'About', 'Resources', 'Integrations', 'Contact'].map((item) => (
+                {['Solutions', 'About', 'Resources', 'Contact'].map((item) => (
                 <motion.li 
                   key={item}
                   variants={itemVariants}
@@ -101,6 +104,12 @@ function Navigation() {
                 </motion.li>
               ))}
           </motion.ul>
+          <Link to={'/analyze'}>
+            <button className='w-full mt-4 bg-gradient-to-r from-[#047be3] via-[#7856e7] to-[#b514e1] hover:scale-110 transition-all duration-200 group py-2 cursor-pointer rounded-full text-white font-semibold'>
+              Analyze
+              <FontAwesomeIcon icon={faWandMagicSparkles} className='ml-2'/>
+            </button>
+          </Link>
           </motion.div>
         )}
       </AnimatePresence>

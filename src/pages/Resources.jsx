@@ -154,63 +154,64 @@ function Resources() {
   const filteredArticles = activeTab === "all" ? articles : articles.filter((a) => a.category === activeTab);
 
   return (
-    <div className='px-30 pt-[20vh] pb-[5vh] outfit-font justify-center items-center flex flex-col gap-y-[15vh]'>
-      <img src="/resource-bg.png" alt="logo-image" className='absolute w-4xl -top-1/3 -left-1/5 blur-xl z-0'/>
-        <div className='relative flex justify-between items-center group p-10 border border-[#234567] rounded-2xl bg-gradient-to-br to-[#294281] from-transparent z-50'>
-            <div className='p-8 w-1/2 flex flex-col gap-y-6'>
-                <h1 className='text-[#0d84a8]'>Use Cases</h1>
-                <h1 className='text-[4rem] tracking-tight leading-16 text-white group-hover:cursor-pointer group-hover:underline ' style={{fontWeight: 600}}>Protection Without Verification Is Just Assumption</h1>
-                <p className='text-[#86acb1]'>High activity doesn’t always mean trust. Fake profiles can create noise, mislead users, and undermine platform integrity, revealing the hidden risks of unverified interactions.</p>
-            </div>
-            <div className='w-fit overflow-hidden rounded-2xl border border-[#234567] shadow-2xl z-50'>
-              <img src="/resource-header.png" alt="resource-header Image" className='h-[60vh] object-fit group-hover:scale-110 transition-all ease-in-out duration-300'/>
-            </div> 
-        </div>
-        
-        <div className="flex gap-x-10">
+    <div className='px-4 md:px-10 xl:px-30 pt-[20vh] pb-10 outfit-font justify-center items-center flex flex-col gap-y-[15vh]'>
 
-          {/* Sidebar */}
-          <div className="text-xl text-[#86acb1] whitespace-nowrap flex flex-col gap-y-10">
-            <div
-              onClick={() => setActiveTab("all")}
-              className={`cursor-pointer ${
-                activeTab === "all"
-                  ? "border-l-2 border-blue-400 pl-2 font-bold"
-                  : "font-bold"
-              }`}
-            >
-              All Posts
-            </div>
-            <div onClick={() => setActiveTab("community")} className={`cursor-pointer ${activeTab === "community" ? "border-l-2 border-blue-400 pl-2 transition-opacity duration-500 ease-in-out opacity-100 animate-fadeIn font-semibold " : ""}`}>
-              Community
-            </div>
-            <div onClick={() => setActiveTab("ai")} className={`cursor-pointer ${activeTab === "ai" ? "border-l-2 border-blue-400 pl-2 transition-opacity duration-500 ease-in-out opacity-100 animate-fadeIn font-semibold " : ""}`}>
-              Artificial Intelligence
-            </div>
-            <div onClick={() => setActiveTab("uses")} className={`cursor-pointer ${activeTab === "uses" ? "border-l-2 border-blue-400 pl-2 transition-opacity duration-500 ease-in-out opacity-100 animate-fadeIn font-semibold " : ""}`}>
-              Use Cases
-            </div>
+      <img src="/resource-bg.png" alt="logo-image" className='absolute w-4xl -top-0 md:-top-1/4 xl:-top-1/3 -left-1/5 blur-xl z-0'/>
+
+      <div className='flex flex-col gap-y-4 xl:flex-row justify-between items-center group p-4 md:p-10 border border-[#234567] rounded-2xl bg-gradient-to-br to-[#294281] from-transparent z-50'>
+          <div className='p-8 w-auto xl:w-1/2 flex flex-col gap-y-3'>
+              <h1 className='text-[#0d84a8]'>Use Cases</h1>
+              <h1 className='text-3xl xl:text-[4rem] tracking-tight leading-tight text-white group-hover:cursor-pointer group-hover:underline ' style={{fontWeight: 600}}>Protection Without Verification Is Just Assumption</h1>
+              <p className='text-[#86acb1]'>High activity doesn’t always mean trust. Fake profiles can create noise, mislead users, and undermine platform integrity, revealing the hidden risks of unverified interactions.</p>
           </div>
+          <div className='w-fit overflow-hidden rounded-2xl border border-[#234567] shadow-2xl z-50'>
+            <img src="/resource-header.png" alt="resource-header Image" className='w-full h-[40vh] md:h-full xl:h-[60vh] object-fit group-hover:scale-110 transition-all ease-in-out duration-300'/>
+          </div> 
+      </div>
+      
+      <div className="flex flex-col xl:flex-row gap-x-10">
 
-          {/* Articles */}
-          <div 
-            key={activeTab}
-            className="grid grid-cols-2 gap-x-5 gap-y-15 px-30 transition-opacity duration-500 ease-in-out opacity-100 animate-fadeIn"
+        {/* Sidebar/Heading */}
+        <div className='block xl:hidden w-full'>
+          <h1 className='text-4xl text-[#32649a] font-semibold mb-4'>Our Resources</h1>
+        </div>
+        <div className="hidden text-xl text-[#86acb1] whitespace-nowrap xl:flex flex-col gap-y-10">
+
+          <div onClick={() => setActiveTab("all")} className={`cursor-pointer ${activeTab === "all" ? "border-l-2 border-blue-400 pl-2 font-bold" : "font-bold"}`}
           >
-            {filteredArticles.map((a) => (
-              <Article
-                key={a.id}
-                link={a.link}
-                image={a.image}
-                title={a.title}
-                heading={a.heading}
-                description={a.description}
-              />
-            ))}
+            All Posts
           </div>
+          <div onClick={() => setActiveTab("community")} className={`cursor-pointer ${activeTab === "community" ? "border-l-2 border-blue-400 pl-2 transition-opacity duration-500 ease-in-out opacity-100 animate-fadeIn font-semibold " : ""}`}>
+            Community
+          </div>
+          <div onClick={() => setActiveTab("ai")} className={`cursor-pointer ${activeTab === "ai" ? "border-l-2 border-blue-400 pl-2 transition-opacity duration-500 ease-in-out opacity-100 animate-fadeIn font-semibold " : ""}`}>
+            Artificial Intelligence
+          </div>
+          <div onClick={() => setActiveTab("uses")} className={`cursor-pointer ${activeTab === "uses" ? "border-l-2 border-blue-400 pl-2 transition-opacity duration-500 ease-in-out opacity-100 animate-fadeIn font-semibold " : ""}`}>
+            Use Cases
+          </div>
+
         </div>
 
-        <Footer />
+        {/* Articles */}
+        <div 
+          key={activeTab}
+          className="grid grid-cols-1 xl:grid-cols-2 xl:gap-x-5 xl:gap-y-15 gap-y-14  xl:px-30 transition-opacity duration-500 ease-in-out opacity-100 animate-fadeIn"
+        >
+          {filteredArticles.map((a) => (
+            <Article
+              key={a.id}
+              link={a.link}
+              image={a.image}
+              title={a.title}
+              heading={a.heading}
+              description={a.description}
+            />
+          ))}
+        </div>
+      </div>
+
+      <Footer />
 
     </div>
   )
