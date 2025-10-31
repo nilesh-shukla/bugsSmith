@@ -41,12 +41,12 @@ function SolutionsPage() {
     }
 
   return (
-    <div className='pt-[20vh] px-15 flex flex-col gap-y-20 outfit-font'>
-        <div className='flex flex-col gap-y-7 '>
+    <div className='pt-[20vh] px-4 lg:px-8 xl:px-15 flex flex-col gap-y-20 outfit-font'>
+        <div className='flex flex-col gap-y-2 md:gap-y-4 xl:gap-y-7 '>
             <h1 className='text-[#0d84a8]'>Smith for Industries</h1>
-            <h1 className='text-[4rem] text-white tracking-tight leading-16 font-semibold w-1/2'>A Comprehensive Solution For Industries</h1>
+            <h1 className='text-4xl md:text-[3.5rem] xl:text-[4rem] text-white tracking-tight leading-tight md:leading-16 font-semibold w-full xl:w-1/2'>A Comprehensive Solution For Industries</h1>
             <p className='text-[#86acb1]'>Safeguard your digital presence with real-time alerts that expose imposters and protect genuine interactions</p>
-            <button className='bg-white p-4 rounded-full w-fit font-semibold text-[#052553]'>Join Waitlist</button>
+            <button className='bg-white p-4 rounded-full w-full md:w-fit font-semibold text-[#052553]'>Join Community</button>
         </div>
 
         <div className='space-y-8'>
@@ -54,20 +54,20 @@ function SolutionsPage() {
                 <img src="/SolutionsPage-img1.png" alt="" className='rounded-t-2xl' />
                 <img src="/SolutionsPage-img2.png" alt="" className='rounded-b-2xl'/>
             </div>
-            <p className='text-center text-4xl text-[#86acb1]'>As a social media user, brand, or community manager, you know how important it is to protect your online presence from fake accounts and impersonators. However, spotting fraudulent profiles, verifying authenticity, and staying ahead of scams can be overwhelming and time-consuming. Our platform simplifies this process by automatically detecting suspicious handles, sending real-time alerts, and safeguarding your digital community—so you can focus on building genuine connections with confidence</p>
+            <p className='text-center text-sm md:text-xl xl:text-4xl text-[#86acb1]'>As a social media user, brand, or community manager, you know how important it is to protect your online presence from fake accounts and impersonators. However, spotting fraudulent profiles, verifying authenticity, and staying ahead of scams can be overwhelming and time-consuming. Our platform simplifies this process by automatically detecting suspicious handles, sending real-time alerts, and safeguarding your digital community—so you can focus on building genuine connections with confidence</p>
         </div>
 
         {/* Feature Section */}
-        <div className='space-y-4'>
+        <div className='space-y-8 xl:space-y-4'>
             <div className='bg-[#86acb1] px-2 py-1 rounded-full w-fit'>
                 <h1 className='text-[#1178b3] font-semibold'>Key Features</h1>
             </div>
-            <div className='flex gap-4 w-full items-end'>
+            <div className='flex flex-col xl:flex-row gap-10 xl:gap-4 w-full items-center xl:items-end'>
                 <div>
-                    <h1 className='text-[3rem] text-white '>Deliver an Exceptional Team Experience</h1>
+                    <h1 className='text-4xl md:text-[3.5rem] xl:text-[4rem] text-white tracking-tight leading-tight md:leading-16'>Deliver an Exceptional Team Experience</h1>
                     <h1 className='text-[#86acb1]'>evolutionizes the way users stay safe online by detecting fake profiles and impersonators in real time. With powerful tools to verify authenticity and send instant alerts, BugsSmith protects communities, strengthens trust, and ensures genuine connections across social media</h1>
                 </div>
-                <div className='flex gap-4 justify-end w-[50%] text-[#86acb1]'>
+                <div className='flex gap-4 justify-center items-center xl:justify-end w-full md:w-[50%] text-[#86acb1]'>
                     <button className='border-2 border-[#86acb13d] rounded-full p-4 items-center hover:bg-[#9bbff1] hover:text-black transition-all duration-300' onClick={handlePrev}>
                         <FontAwesomeIcon icon={faArrowLeft}/>
                     </button>

@@ -2,7 +2,7 @@ import React from 'react'
 
 function FeatureCard({className, image, heading, describe}) {
   return (
-    <div className={`p-8 flex flex-col gap-2 bg-gradient-to-bl from-[#5592cf79] via-[#1f8cf845] to-transparent w-[60vh] h-[70vh] rounded-2xl ${className}`}>
+    <div className={`p-8 flex flex-col gap-2 bg-gradient-to-bl from-[#5592cf79] via-[#1f8cf845] to-transparent w-screen h-full xl:w-[60vh] xl:h-[70vh] rounded-2xl ${className}`}>
         <div>
             <img 
                 src={image} 
