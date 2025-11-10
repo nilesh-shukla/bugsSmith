@@ -1,4 +1,5 @@
-1. create a dashboard
+1. 
 2. About Us page - i) create a dashboard section to show how it appears
 3. Adding proper images for the posts in resources 
 4. Add website name in the navigation when switching to phone view
+5. Add functionality like history in dashboard

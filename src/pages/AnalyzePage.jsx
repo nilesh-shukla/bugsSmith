@@ -23,15 +23,16 @@ function AnalyzePage() {
   }
 
     return (
-        <div className='p-4 h-screen outfit-font'>
-            <div className='flex h-full overflow-hidden'>
+        <div className=' xl:p-4 h-screen outfit-font'>
+            <div className='relative xl:flex w-full h-full xl:overflow-hidden'>
                 {/* Sidebar */}
-                <div className='h-full'>
+                {/* Sidebar: absolute overlay on mobile (high z), static on xl */}
+                <div className='absolute w-full md:w-1/2 xl:w-72 h-screen xl:h-full z-50 xl:static'>
                     <Sidebar onSelect={setActivePage} />
                 </div>
 
                 {/* Content Area */}
-                <div className='flex-1 h-full overflow-y-auto rounded-r-3xl bg-[#283a4d5b] scrollbar-hide'>
+                <div className='flex-1 w-full xl:w-auto h-full z-0 overflow-y-auto xl:rounded-r-3xl bg-[#243a4f] xl:bg-[#283a4d5b] scrollbar-hide'>
                     {renderPage()}
                 </div>
             </div>
