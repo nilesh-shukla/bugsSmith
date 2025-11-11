@@ -27,7 +27,7 @@ function Sidebar({onSelect, className}) {
                     <FontAwesomeIcon icon={faEllipsisVertical} className="text-3xl" />
                 </button>
             )}
-            <div className={`transform transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full'} xl:translate-x-0 w-full flex flex-col xl:gap-10 justify-between xl:justify-normal xl:rounded-l-3xl bg-gradient-to-br from-[#021f3b] to-[#3167b9] xl:bg-[#3568b45d] px-4 py-8 sticky h-full ${className}`}>
+            <div className={`transform transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full'} xl:translate-x-0 w-full flex flex-col xl:gap-10 gap-20 xl:justify-normal xl:rounded-l-3xl bg-gradient-to-br from-[#021f3b] to-[#3167b9] xl:bg-[#3568b45d] px-4 py-8 sticky h-full ${className}`}>
 
                 <div className='flex flex-col gap-8'>
                     <div className='flex w-full justify-between items-center text-[#aeb4ba] text-lg'>
