@@ -26,7 +26,6 @@ function AnalyzePage() {
         <div className=' xl:p-4 h-screen outfit-font'>
             <div className='relative xl:flex w-full h-full xl:overflow-hidden'>
                 {/* Sidebar */}
-                {/* Sidebar: absolute overlay on mobile (high z), static on xl */}
                 <div className='absolute w-full md:w-1/2 xl:w-72 h-screen xl:h-full z-50 xl:static'>
                     <Sidebar onSelect={setActivePage} />
                 </div>
