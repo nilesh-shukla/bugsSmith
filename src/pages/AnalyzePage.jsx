@@ -27,20 +27,26 @@ function AnalyzePage() {
   }
 
     return (
-        <div className=' xl:p-4 h-full outfit-font'>
+        <div className=' xl:p-4 h-full xl:h-screen outfit-font'>
             <div className='relative xl:flex w-full h-full xl:overflow-hidden'>
                 
                 {/* Sidebar */}
-                <div className={`absolute w-full md:w-1/2 xl:w-72 top-0 left-0 h-screen xl:h-full z-50 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} transform transition-transform duration-300`}>
+                <div className={`block xl:hidden fixed w-full md:w-1/2 xl:w-72 top-0 left-0 h-screen xl:h-full rounded-l-3xl z-50 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} transform transition-transform duration-300`}>
                     <Sidebar onSelect={setActivePage} onClose={() => setSidebarOpen(false)} />
                 </div>
 
-                <button className='fixed top-1/2 left-0 z-40 px-1 py-2 bg-[#163c7a] text-white rounded-r-full' onClick={() => setSidebarOpen(true)} aria-label='Open sidebar'>
-                    <FontAwesomeIcon icon={faEllipsisVertical} className='text-2xl' />
+                <button className='block xl:hidden fixed top-1/2 left-0 z-40 p-3 md:p-6 bg-[#163c7a] text-white rounded-r-2xl' onClick={() => setSidebarOpen(true)} aria-label='Open sidebar'>
+                    <FontAwesomeIcon icon={faEllipsisVertical} className='text-3xl' />
                 </button>
 
+
+                {/* Desktop Sidebar */}
+                <div className='hidden xl:block w-72 h-full'>
+                    <Sidebar onSelect={setActivePage} />
+                </div>
+
                 {/* Content Area */}
-                <div className='flex-1 w-full xl:w-auto h-full z-0 overflow-y-auto xl:rounded-r-3xl bg-[#243a4f] xl:bg-[#283a4d5b] scrollbar-hide'>
+                <div className='flex-1 w-full xl:w-auto h-full z-0 overflow-y-auto xl:rounded-l-none xl:rounded-r-3xl bg-[#243a4f] xl:bg-[#283a4d5b] scrollbar-hide'>
                     {renderPage()}
                 </div>
             </div>
