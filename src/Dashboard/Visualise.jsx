@@ -73,14 +73,14 @@ function Visualise({vizData: initialVizData = null}) {
 
       <img src="/dashboard-bg/dashboard.png" className='absolute opacity-30 w-full h-full z-0 object-cover' />
 
-      <div className="relative px-8 py-6">
+      <div className="relative p-2 py-8 xl:px-8 xl:py-6">
         <div className='flex justify-between items-center mb-6 w-full'>
-          <div>
-            <h1 className="text-[3rem] text-white font-semibold">Visualise</h1>
-            <p className="text-[#789]">A concise view of dataset distributions and relationships.</p>
+          <div className='space-y-2 md:space-y-0 w-52 md:w-auto'>
+            <h1 className="text-4xl md:text-[3rem] text-white font-semibold">Visualise</h1>
+            <p className="text-xs md:text-sm xl:text-base text-[#789]">A concise view of dataset distributions and relationships.</p>
           </div>
           <button
-            className='flex gap-1 px-3 py-2 justify-between items-center bg-[#06539f] cursor-pointer hover:bg-blue-400 transition-all duration-150 text-white rounded-xl w-36 text-lg' onClick={() => {
+            className='flex gap-1 px-3 py-2 justify-between items-center bg-[#06539f] cursor-pointer hover:bg-blue-400 transition-all duration-150 text-white rounded-xl w-auto xl:w-36 text-lg' onClick={() => {
               try { 
                 sessionStorage.removeItem('viz_data');
               } 
@@ -88,12 +88,12 @@ function Visualise({vizData: initialVizData = null}) {
               setVizData(null);
             }}
           >
-            Refresh
+            <span className="hidden md:block">Refresh</span>
             <FontAwesomeIcon icon={faArrowsRotate} />
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-6">
 
           {/* Followers vs Following scatter */}
           <div className="bg-white w-full p-4 rounded-3xl">
@@ -176,7 +176,7 @@ function Visualise({vizData: initialVizData = null}) {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-6 items-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
               <div className="flex flex-col items-center">
                 <h3 className="text-center text-sm font-semibold">Genuine — Privacy Distribution</h3>
                 { data.genuinePrivacy.length === 0 ? (

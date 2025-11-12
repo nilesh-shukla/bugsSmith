@@ -29,8 +29,8 @@ function SuspicionVSGenuineGraph() {
     <div className="bg-white w-full p-4 rounded-3xl">
       <div className="flex justify-between items-center mb-4">
         <div className="flex flex-col">
-          <h1 className="text-2xl">Suspicion Analytics</h1>
-          <h2 className="text-sm text-gray-600">Comparing suspicious and genuine profiles</h2>
+          <h1 className="text-xl xl:text-2xl">Suspicion Analytics</h1>
+          <h2 className="text-xs xl:text-sm text-gray-600">Comparing suspicious and genuine profiles</h2>
         </div>
 
         <div className="relative inline-block">

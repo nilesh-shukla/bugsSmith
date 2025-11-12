@@ -29,21 +29,21 @@ function Dashboard() {
   return (
     <div className='relative' >
       <img src="/dashboard-bg/dashboard.png" alt="" className='absolute opacity-30 w-full h-full z-0' />
-      <div className='relative pl-14 pr-4 py-4'>
+      <div className='relative p-2 py-8 xl:pl-14 xl:pr-4 py-4'>
         {/* Heading Section */}
         <div className='w-full flex justify-between items-center mb-10'>
-          <h1 className='text-[2.8rem] text-white font-semibold' style={{fontWeight: 400}}>Dashboard</h1>
-          <button className='w-1/8 px-3 py-2 flex justify-between text-lg text-white bg-blue-600 rounded-xl items-center cursor-pointer hover:bg-blue-400 transition-all duration-150'>
-            Add File
-            <FontAwesomeIcon icon={faPlus} className='mr-2 text-base'/>
+          <h1 className='text-4xl md:text-[2.8rem] text-white font-semibold' style={{fontWeight: 400}}>Dashboard</h1>
+          <button className='w-auto xl:w-1/8 px-3 py-2 flex justify-between text-lg text-white bg-blue-600 rounded-xl items-center cursor-pointer hover:bg-blue-400 transition-all duration-150'>
+            <span className='hidden md:block'>Add File</span>
+            <FontAwesomeIcon icon={faPlus} className='md:mr-2 text-base'/>
           </button>
         </div>
 
         {/* Content */}
-        <div className='grid grid-cols-2 grid-rows-[auto_auto] gap-4'>
+        <div className='grid grid-cols-1 xl:grid-cols-2 grid-rows-[auto_auto] gap-4'>
 
           {/* Top-Left */}
-          <div className='grid grid-cols-2 gap-4'>
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
             {/* Img-Visualise */}
             <div className='relative flex bg-gradient-to-br from-[#2f8fee] via-[#135597] to-[#032f5b] p-4 rounded-3xl overflow-hidden'>
               <img src="/dashboard-card.png" className='absolute -rotate-24 -inset-6 opacity-70 z-10' />

@@ -22,10 +22,10 @@ function ProfileBarChart() {
     <div className="bg-white w-full p-4 rounded-3xl">
         <div className="flex justify-between items-center mb-4">
             <div className="flex flex-col gap-1">
-            <h1 className="text-base">Total Profiles</h1>
+            <h1 className="text-lg xl:text-base">Total Profiles</h1>
             <div className="flex items-center gap-2">
-                <h2 className="text-4xl">21,350</h2>
-                <div className="text-white bg-blue-400 rounded-2xl items-center px-4 py-1">+1640 increase</div>
+                <h2 className="text-2xl xl:text-4xl">21,350</h2>
+                <div className="text-white bg-blue-400 rounded-2xl items-center px-1 md:px-4 py-1 text-xs">+1640 increase</div>
             </div>
             </div>
             <div className="relative inline-block">

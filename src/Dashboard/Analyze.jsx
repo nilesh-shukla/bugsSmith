@@ -202,14 +202,14 @@ function Analyze() {
   return (
     <div className="relative">
       <img src="/dashboard-bg/dashboard.png" className='absolute opacity-30 w-full h-full z-0 object-cover' />
-      <div className='relative px-12 py-4 space-y-4 z-20'>
+      <div className='relative p-2 py-8 xl:px-12 xl:py-4 space-y-4 z-20'>
         <div className='flex justify-between items-center mb-6 w-full'>
-          <div>
-            <h1 className="text-[3rem] text-white font-semibold">Analyze</h1>
-            <p className="text-[#789]">We analyze digital footprints to separate genuine users from imposters.</p>
+          <div className="space-y-2 md:space-y-0 w-52 md:w-auto">
+            <h1 className="text-4xl md:text-[3rem] text-white font-semibold">Analyze</h1>
+            <p className="text-xs md:text-sm xl:text-base text-[#789]">We analyze digital footprints to separate genuine users from imposters.</p>
           </div>
-          <button className='flex gap-1 px-3 py-2 justify-between items-center bg-[#06539f] cursor-pointer hover:bg-blue-400 transition-all duration-150 text-white rounded-xl w-36 text-lg' onClick={handleRefresh}>
-            Refresh
+          <button className='flex gap-1 px-3 py-2 justify-between items-center bg-[#06539f] cursor-pointer hover:bg-blue-400 transition-all duration-150 text-white rounded-xl w-auto xl:w-36 text-lg' onClick={handleRefresh}>
+            <span className="hidden md:block">Refresh</span>
             <FontAwesomeIcon icon={faArrowsRotate} />
           </button>
         </div>
@@ -222,10 +222,10 @@ function Analyze() {
           </div>
         )}
 
-        <div className='grid grid-cols-5 gap-4'>
+        <div className='grid grid-cols-1 xl:grid-cols-5 gap-4'>
 
           {/* Input Form Field */}
-          <div className='flex flex-col col-span-2 rounded-4xl p-6 bg-white' id='input-field'>
+          <div className='flex flex-col xl:col-span-2 rounded-4xl p-6 bg-white' id='input-field'>
             <div className='flex justify-between items-center mb-3'>
               <img src="/web-logo.png" className='w-8 h-8' />
                 <h1 className='audiowide-font text-3xl text-[#789]'>
@@ -311,7 +311,7 @@ function Analyze() {
           </div>
 
           {/* Smith Screen */}
-          <div className='flex flex-col col-span-3 rounded-3xl p-6 bg-white' id='file-reader'>
+          <div className='hidden xl:flex flex-col xl:col-span-3 rounded-3xl p-6 bg-white' id='file-reader'>
             <div className="flex flex-col">
               <h1 className="text-3xl text-[#789] font-semibold">Smith Screen</h1>
               <p className="text-[#789]">Scanning of your profile or scapping of profile can be seen here</p>
@@ -331,7 +331,7 @@ function Analyze() {
         </div>
 
         {/* File-Features */}
-        <div className="p-6 bg-white rounded-3xl grid grid-cols-2 gap-4 items-stretch">
+        <div className="p-6 bg-white rounded-3xl grid grid-cols-1 xl:grid-cols-2 gap-4 items-stretch">
 
           {/* Left Column */}
           <div className="flex flex-col gap-2 h-full">

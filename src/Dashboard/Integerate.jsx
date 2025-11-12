@@ -15,8 +15,8 @@ const integrate = [
 function Integrate() {
   return (
     <div className="relative">
-      <img src="/dashboard-bg/integerate.png" className='absolute opacity-15 w-full h-full z-0 object-cover' />
-      <div className='relative flex flex-col gap-8 p-16 justify-center items-center'>
+      <img src="/dashboard-bg/analyze.png" className='absolute opacity-15 w-full h-full z-0 object-cover' />
+      <div className='relative flex flex-col gap-8 p-2 py-8 md:p-16 justify-center items-center'>
         <div className='flex gap-2 items-center kode-font'>
           <img src="/web-logo.png" alt="" className='w-8 h-8' />
           <h1 className='text-2xl text-[#9cc0e4]'>BugsSmith</h1>
@@ -69,7 +69,7 @@ function Integrate() {
           </button>
         </div>
 
-        <div className='grid grid-cols-4 w-full gap-6 items-center'>
+        <div className='grid grid-cols-2 md:grid-cols-4 w-full gap-2 xl:gap-6 items-center'>
           <IntegerateCard image={"/IntegerateCardImages/git.png"} heading={"GIT"} describe={"Place to commit my coding history"} tag={"other"} />
           <IntegerateCard image={"/IntegerateCardImages/react.png"} heading={"ReactJS"} describe={"The one bringing ideas to reality"} tag={"frontend"} />
           <IntegerateCard image={"/IntegerateCardImages/nodejs.png"} heading={"NodeJS"} describe={"Works best for frontend and backend"} tag={"frontend"} />

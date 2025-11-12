@@ -24,7 +24,7 @@ function ProfilePieChart() {
   return (
     <div className="bg-white w-full p-4 rounded-3xl">
         <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl">Profile Distributions</h1>
+            <h1 className="text-xl md:text-2xl">Profile Distributions</h1>
             <div className="relative inline-block">
             <Select
                 options={time}
@@ -60,7 +60,12 @@ function ProfilePieChart() {
         <div className='grid grid-cols-3 gap-4 items-center'>
             <ResponsiveContainer width={"100%"} height={300} className={`col-span-2`}>
                 <PieChart>
-                    <Pie data={profile} dataKey="value" cx="50%" cy="50%" innerRadius={70} outerRadius={120} paddingAngle={2}>
+                    <Pie data={profile} dataKey="value" cx="50%" cy="50%" innerRadius={70} outerRadius={120} paddingAngle={2} className='hidden md:block'>
+                        {profile.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                    </Pie>
+                    <Pie data={profile} dataKey="value" cx="50%" cy="50%" innerRadius={70} outerRadius={100} paddingAngle={2} className='block md:hidden'>
                         {profile.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                         ))}
@@ -75,9 +80,9 @@ function ProfilePieChart() {
                         <div key={index} className='flex items-center justify-between'>
                             <div className='flex gap-1 items-center'>
                                 <div className='w-4 h-4 rounded-sm' style={{backgroundColor: COLORS[index % COLORS.length]}} />
-                                <p className='text-gray-700'>{entry.name}</p>
+                                <p className='text-gray-700 text-xs md:text-base'>{entry.name}</p>
                             </div>
-                            <p className='text-gray-500 text-sm'>{percent}%</p>
+                            <p className='text-gray-500 text-xs md:text-sm'>{percent}%</p>
                         </div>
                     )
                 })}
