@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChartSimple, faIdBadge, faMagnifyingGlassChart, faCodeMerge, faXmark, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faChartSimple, faIdBadge, faMagnifyingGlassChart, faCodeMerge, faXmark, faRightFromBracket, faCircleUser } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 
 function Sidebar({ onSelect, className, onClose }) {
@@ -14,11 +14,12 @@ function Sidebar({ onSelect, className, onClose }) {
     ];
 
     return (
-        <div className={`w-full flex flex-col xl:gap-10 justify-between xl:justify-normal xl:rounded-l-3xl bg-gradient-to-br from-[#021f3b] to-[#3167b9] xl:bg-[#3568b45d] px-4 py-8 h-full ${className || ''}`}>
+        <div className={`w-full flex flex-col gap-20 xl:gap-0 justify-normal xl:justify-between xl:rounded-l-3xl bg-gradient-to-br from-[#021f3b] to-[#3167b9] xl:bg-[#3568b45d] px-4 py-8 h-full ${className || ''}`}>
 
             <div className="flex flex-col gap-8">
-                <div className="flex w-full justify-between items-center text-[#aeb4ba] text-lg">
-                    <button aria-label="Close sidebar" onClick={() => onClose && onClose()} className="xl:hidden text-white p-1">
+                {/* SignUp in Mobile View */}
+                <div className="xl:hidden flex w-full justify-between items-center text-[#aeb4ba] text-lg">
+                    <button onClick={() => onClose && onClose()} className="xl:hidden text-white p-1">
                         <FontAwesomeIcon icon={faXmark} />
                     </button>
 
@@ -60,6 +61,21 @@ function Sidebar({ onSelect, className, onClose }) {
                             {opt.label}
                         </div>
                     ))}
+                </div>
+            </div>
+
+            {/* SignUp in Desktop View */}
+            <div className=" hidden xl:flex flex-col w-full items-center text-[#aeb4ba] text-xl">
+                <button className='flex gap-2 items-center hover:text-gray-500 hover:cursor-pointer transition-all duration-300'>
+                    <FontAwesomeIcon icon={faCircleUser} />
+                    User
+                </button>
+                <hr className="w-full border-t border-gray-600 my-4" />
+                <div>
+                    <button className="flex gap-2 items-center text-red-400 hover:text-red-500 hover:cursor-pointer transition-all duration-300">
+                        <FontAwesomeIcon icon={faRightFromBracket} />
+                        Log out
+                    </button>
                 </div>
             </div>
         </div>

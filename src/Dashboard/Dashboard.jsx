@@ -29,7 +29,7 @@ function Dashboard() {
   return (
     <div className='relative' >
       <img src="/dashboard-bg/dashboard.png" alt="" className='absolute opacity-30 w-full h-full z-0' />
-      <div className='relative p-2 py-8 xl:pl-14 xl:pr-4 py-4'>
+      <div className='relative p-2 py-8 xl:pl-14 xl:pr-4 xl:py-4'>
         {/* Heading Section */}
         <div className='w-full flex justify-between items-center mb-10'>
           <h1 className='text-4xl md:text-[2.8rem] text-white font-semibold' style={{fontWeight: 400}}>Dashboard</h1>
