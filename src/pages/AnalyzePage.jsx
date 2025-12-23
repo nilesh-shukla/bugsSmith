@@ -11,7 +11,7 @@ import Integerate from '../Dashboard/Integerate';
 function AnalyzePage() {
 
   const [activePage, setActivePage] = useState("dashboard");
-    const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const renderPage = () => {
     switch(activePage){
@@ -35,7 +35,7 @@ function AnalyzePage() {
                     <Sidebar onSelect={setActivePage} onClose={() => setSidebarOpen(false)} />
                 </div>
 
-                <button className='block xl:hidden fixed top-1/2 left-0 z-40 p-3 md:p-6 bg-[#163c7a] text-white rounded-r-2xl' onClick={() => setSidebarOpen(true)} aria-label='Open sidebar'>
+                <button className='block xl:hidden fixed top-1/2 left-0 z-40 pl-0 py-4 pr-3 bg-[#163c7a] text-white rounded-r-full' onClick={() => setSidebarOpen(true)} >
                     <FontAwesomeIcon icon={faEllipsisVertical} className='text-3xl' />
                 </button>
 

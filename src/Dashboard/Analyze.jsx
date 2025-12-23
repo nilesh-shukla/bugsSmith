@@ -170,6 +170,9 @@ function Analyze() {
             suspicion_score_average: averageScore
           }
         )); 
+        sessionStorage.setItem('viz_enabled', 'true');
+        // notify same-tab listeners that viz_enabled changed
+        try { window.dispatchEvent(new Event('viz_enabled_changed')); } catch (e) {}
       } 
       catch (e) {}
     }
@@ -190,6 +193,8 @@ function Analyze() {
   const handleRefresh = () => {
     try { 
       sessionStorage.removeItem('analyze_results'); 
+      sessionStorage.removeItem('viz_enabled');
+      try { window.dispatchEvent(new Event('viz_enabled_changed')); } catch (e) {}
     }
     catch (e) {}
     setResults(null);

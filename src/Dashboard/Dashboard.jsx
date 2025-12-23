@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEarthAsia, faPeopleLine, faRobot, faSkull, faPlus } from '@fortawesome/free-solid-svg-icons';
 
@@ -9,23 +10,37 @@ import ProfileActivity from './dashboard-Component/ProfileActivity';
 import SuspicionVSGenuineGraph from './dashboard-Component/SuspicionVSGenuineGraph';
 import { div, label, option, p, rect } from "framer-motion/client";
 
-const data = [
-  { name: "Monday", abv: "Mon", value: 400},
-  { name: "Tuesday", abv: "Tue", value: 700},
-  { name: "Wednesday", abv: "Wed", value: 1100},
-  { name: "Thursday", abv: "Thu", value: 2000},
-  { name: "Friday", abv: "Fri", value: 800},
-  { name: "Saturday", abv: "Sat", value: 1200},
-  { name: "Sunday", abv: "Sun", value: 239},
-];
-
-const time = [
-  { label: "Weekly" },
-  { label: "Monthly" },
-  { label: "Yearly" }
-];
-
 function Dashboard() {
+  
+  const [vizEnabled, setVizEnabled] = useState(false);
+  useEffect(() => {
+    try {
+      setVizEnabled(sessionStorage.getItem('viz_enabled') === 'true');
+    }
+    catch (e) {}
+    const onStorage = (e) => {
+      if (e.key === 'viz_enabled') setVizEnabled(e.newValue === 'true');
+    }
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, []);
+
+  const data = [
+    { name: "Monday", abv: "Mon", value: 400},
+    { name: "Tuesday", abv: "Tue", value: 700},
+    { name: "Wednesday", abv: "Wed", value: 1100},
+    { name: "Thursday", abv: "Thu", value: 2000},
+    { name: "Friday", abv: "Fri", value: 800},
+    { name: "Saturday", abv: "Sat", value: 1200},
+    { name: "Sunday", abv: "Sun", value: 239},
+  ];
+
+  const time = [
+    { label: "Weekly" },
+    { label: "Monthly" },
+    { label: "Yearly" }
+  ];
+
   return (
     <div className='relative' >
       <img src="/dashboard-bg/dashboard.png" alt="" className='absolute opacity-30 w-full h-full z-0' />
@@ -46,11 +61,16 @@ function Dashboard() {
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
             {/* Img-Visualise */}
             <div className='relative flex bg-gradient-to-br from-[#2f8fee] via-[#135597] to-[#032f5b] p-4 rounded-3xl overflow-hidden'>
-              <img src="/dashboard-card.png" className='absolute -rotate-24 -inset-6 opacity-70 z-10' />
+              <img src="/dashboard-card.png" className='absolute -rotate-24 -inset-6 opacity-30 md:opacity-70 z-10' />
               <div className='mt-auto space-y-2'>
                 <h1 className='text-2xl text-white leading-tight'>Visualise your dataset for more precise and easy understanding</h1>
                 <p className='leading-tight text-[#9dd5e3]'>Things like graphical representation using bars, pie-charts and distplots can help in better understanding of dataset</p>
-                <button className='p-2 w-full text-lg bg-[#76b4f1] hover:bg-blue-500 hover:scale-105 transition-all duration-200  rounded-xl cursor-pointer hover:text-gray-300' style={{fontWeight: 300}}>Visualise</button>
+                <button
+                  disabled={!vizEnabled}
+                  className={`p-2 w-full text-lg ${vizEnabled ? 'bg-[#76b4f1] hover:bg-blue-500 hover:scale-105 transition-all duration-200 cursor-pointer' : 'bg-gray-300 cursor-not-allowed'} rounded-xl hover:text-gray-300`} style={{fontWeight: 300}}
+                  onClick={() => { if(!vizEnabled) return; }}>
+                    Visualise
+                </button>
               </div>
             </div>
             {/* Feature Section */}

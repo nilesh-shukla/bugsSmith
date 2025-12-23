@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleDown, faEllipsisV, faTimes, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons';
+import { faAngleDown, faEllipsisV, faTimes, faWandMagicSparkles, faPuzzlePiece, faCircleInfo, faBook, faEnvelope, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import LogIn from './LogIn';
 
 function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
   const menuVariants = {
     hidden: { height: 0, opacity: 0 },
     visible: {
@@ -55,6 +57,9 @@ function Navigation() {
             <Link to="/about" className="text-[#9ebedf] hover:text-white transition-all duration-300 ease-in-out font-medium">About Us</Link>
             <Link to="/resources" className="text-[#9ebedf] hover:text-white transition-all duration-500 ease-in-out font-medium">Resources</Link>
             <Link to="/contact" className="text-[#9ebedf] hover:text-white transition-all duration-300 ease-in-out font-medium">Contact Us</Link>
+
+            {/* Login */}
+            <button onClick={() => setLoginOpen(true)} className='text-[#9ebedf] hover:text-white hover:bg-[#03418087] rounded-full hover:px-4 hover:py-2 transition-all duration-300 cursor-pointer'>LogIn</button>
           </div>
           
           {/* MENU */}
@@ -70,7 +75,7 @@ function Navigation() {
 
       {/* MENU FUNCTIONALITY */}
       <AnimatePresence>
-        {isOpen && (
+      {isOpen && (
           <motion.div
             className="fixed px-5 py-4 top-24 left-0 w-full backdrop-blur-3xl rounded-2xl xl:hidden z-[9998] overflow-hidden"
             variants={menuVariants}
@@ -88,31 +93,49 @@ function Navigation() {
                 }
               }}
             >
-                {['Solutions', 'About', 'Resources', 'Contact'].map((item) => (
+                {[
+                  { label: 'Solutions', to: '/solutions', icon: faPuzzlePiece },
+                  { label: 'About', to: '/about', icon: faCircleInfo },
+                  { label: 'Resources', to: '/resources', icon: faBook },
+                  { label: 'Contact', to: '/contact', icon: faEnvelope },
+                ].map((item) => (
                 <motion.li 
-                  key={item}
+                  key={item.label}
                   variants={itemVariants}
                   className="w-full"
                 >
                   <Link 
-                    to={`/${item.toLowerCase()}`}
-                    className="block w-full py-2 hover:text-blue-500 transition-colors"
+                    to={item.to}
+                    className="flex items-center gap-3 w-full py-2 hover:text-blue-500 transition-colors"
                     onClick={() => setIsOpen(false)}
                   >
-                    {item}
+                    <span className="w-6 flex justify-center">
+                      <FontAwesomeIcon icon={item.icon} className="text-lg text-[#9edff6]" />
+                    </span>
+                    <span className="flex-1">{item.label}</span>
                   </Link>
                 </motion.li>
               ))}
-          </motion.ul>
-          <Link to={'/analyze'}>
-            <button className='w-full mt-4 bg-gradient-to-r from-[#047be3] via-[#7856e7] to-[#b514e1] hover:scale-110 transition-all duration-200 group py-2 cursor-pointer rounded-full text-white font-semibold'>
-              Analyze
-              <FontAwesomeIcon icon={faWandMagicSparkles} className='ml-2'/>
-            </button>
-          </Link>
+            </motion.ul>
+            <button onClick={() => { setIsOpen(false); setLoginOpen(true); }} className='w-full bg-blue-500 text-white rounded-full py-3 transition-all duration-300 cursor-pointer mt-2'>LogIn</button>
+            {/* <Link to={'/analyze'}>
+              <button className='w-full mt-4 bg-gradient-to-r from-[#047be3] via-[#7856e7] to-[#b514e1] hover:scale-110 transition-all duration-200 group py-2 cursor-pointer rounded-full text-white font-semibold'>
+                Analyze
+                <FontAwesomeIcon icon={faWandMagicSparkles} className='ml-2'/>
+              </button>
+            </Link> */}
           </motion.div>
         )}
       </AnimatePresence>
+      {/* Login Modal */}
+      {loginOpen && (
+        <div className="fixed inset-0 z-[10000] flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setLoginOpen(false)} />
+          <div className="relative z-10">
+            <LogIn asModal onClose={() => setLoginOpen(false)} />
+          </div>
+        </div>
+      )}
     </div>
   )
 }

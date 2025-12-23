@@ -1,10 +1,41 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChartSimple, faIdBadge, faMagnifyingGlassChart, faCodeMerge, faXmark, faRightFromBracket, faCircleUser } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
+import { circIn } from 'framer-motion';
 
 function Sidebar({ onSelect, className, onClose }) {
     const [active, setActive] = useState('dashboard');
+
+    const [vizEnabled, setVizEnabled] = useState(() => {
+        try {
+            return sessionStorage.getItem('viz_enabled') === 'true' && sessionStorage.getItem('analyze_results') !== null;
+        }
+        catch {
+            return false;
+        }
+    });
+
+    useEffect(() => {
+        const recompute = () => {
+            try {
+                setVizEnabled(sessionStorage.getItem('viz_enabled') === 'true' && sessionStorage.getItem('analyze_results') !== null);
+            }
+            catch {
+                setVizEnabled(false);
+            }
+        };
+
+        const onStorage = (e) => {
+            if (e.key === 'viz_enabled' || e.key === 'analyze_results') {
+                recompute();
+            }
+        };
+        const onCustom = () => recompute();
+        window.addEventListener('storage', onStorage);
+        window.addEventListener('viz_enabled_changed', onCustom);
+        return () => { window.removeEventListener('storage', onStorage); window.removeEventListener('viz_enabled_changed', onCustom); };
+    }, []);
 
     const options = [
         { id: 'dashboard', label: 'Dashboard', icon: faIdBadge },
@@ -47,20 +78,29 @@ function Sidebar({ onSelect, className, onClose }) {
             {/* Dashboard Options */}
             <div>
                 <div className="flex flex-col gap-6 text-2xl xl:text-lg text-white" style={{ fontWeight: 200 }}>
-                    {options.map((opt) => (
-                        <div
-                            key={opt.id}
-                            className={`items-center cursor-pointer px-2 ${active === opt.id ? 'text-blue-400 bg-white/5 rounded-2xl py-4' : 'text-gray-400'}`}
-                            onClick={() => {
-                                onSelect(opt.id);
-                                setActive(opt.id);
-                            }}
-                            style={{ fontWeight: 400 }}
-                        >
-                            <FontAwesomeIcon icon={opt.icon} className="mr-2" />
-                            {opt.label}
-                        </div>
-                    ))}
+
+                    {options.map((opt) => {
+                        const isVisualiseOption = opt.id === 'visualise';
+                        const disabled = isVisualiseOption && !vizEnabled;
+
+                        return (
+                            <div
+                                key={opt.id}
+                                className={`items-center cursor-pointer px-2 ${active === opt.id ? 'text-blue-400 bg-white/5 rounded-2xl py-4' : 'text-gray-400'}
+                                ${disabled ? 'opacity-50 pointer-events-none' : ''}`}
+                                onClick={() => {
+                                    if (disabled) return;
+                                    onSelect(opt.id);
+                                    setActive(opt.id);
+                                }}
+                                style={{fontWeight:400}}
+                            >
+                                <FontAwesomeIcon icon={opt.icon} className='mr-2' />
+                                {opt.label}
+                            </div>
+                        )
+                    })}
+
                 </div>
             </div>
 

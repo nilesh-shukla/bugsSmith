@@ -10,6 +10,7 @@ import About from './pages/About';
 import Solutions from './pages/SolutionsPage';
 import Contact from './pages/Contact';
 import AnalyzePage from './pages/AnalyzePage';
+import LogIn from './components/LogIn';
 
 function AppRoutes() {
   const location = useLocation();
@@ -23,7 +24,7 @@ function AppRoutes() {
 
   if (loading) return <Loader />;
 
-  // Normally we would keep this return statement inside App() function but due to "useLocation()" which is used as a router, we need to keep the rouoting outside for it to render inside.
+  // Normally we would keep this return statement inside App() function but due to "useLocation()" which is used as a router, we need to keep the routing outside for it to render inside.
   return (
     <Routes>
       <Route element={<LayoutWithNav />}>
@@ -35,7 +36,7 @@ function AppRoutes() {
       </Route>
       <Route path="/analyze" element={<AnalyzePage />} />
     </Routes>
-  );
+  )
 }
 
 function App() {
