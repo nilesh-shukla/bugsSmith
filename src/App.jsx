@@ -10,7 +10,7 @@ import About from './pages/About';
 import Solutions from './pages/SolutionsPage';
 import Contact from './pages/Contact';
 import AnalyzePage from './pages/AnalyzePage';
-import LogIn from './components/LogIn';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function AppRoutes() {
   const location = useLocation();
@@ -34,7 +34,7 @@ function AppRoutes() {
         <Route path="/solutions" element={<Solutions />} />
         <Route path="/contact" element={<Contact />} />
       </Route>
-      <Route path="/analyze" element={<AnalyzePage />} />
+      <Route path="/analyze" element={<ProtectedRoute><AnalyzePage /></ProtectedRoute>} />
     </Routes>
   )
 }

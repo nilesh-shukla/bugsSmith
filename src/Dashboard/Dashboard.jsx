@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEarthAsia, faPeopleLine, faRobot, faSkull, faPlus } from '@fortawesome/free-solid-svg-icons';
 
 import Features from './dashboard-Component/Features';
-import Visualise from './Visualise';
 import ProfileBarChart from './dashboard-Component/ProfileBarChart';
 import ProfilePieChart from './dashboard-Component/ProfilePieChart';
 import ProfileActivity from './dashboard-Component/ProfileActivity';
@@ -11,7 +10,7 @@ import SuspicionVSGenuineGraph from './dashboard-Component/SuspicionVSGenuineGra
 import { div, label, option, p, rect } from "framer-motion/client";
 
 function Dashboard() {
-  
+
   const [vizEnabled, setVizEnabled] = useState(false);
   useEffect(() => {
     try {
