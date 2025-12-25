@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../context/AuthContext';
+import { apiFetch } from '../api/api';
 
 import Sidebar from '../components/Sidebar';
 import Dashboard from '../Dashboard/Dashboard';
@@ -16,6 +17,7 @@ function AnalyzePage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   //Adding proper frontend route protection(Securing API calls)
+  const { token, logout } = useAuth();
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
@@ -24,22 +26,31 @@ function AnalyzePage() {
         try{
             //Before Calling token checking its existence
             //const token = localStorage.getItem('token');
-            const { token } = useAuth();
             if(!token){
                 navigate('/');
                 return;
             }
 
             //Calling API
-            const response = await fetch('http://localhost:5000/analyze',{
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-            const result = await response.json();
-            if(!response.ok){
-                throw new Error(result.error || 'Unauthorized');
-            }
+            // const response = await fetch('http://localhost:5000/analyze',{
+            //     headers: {
+            //         Authorization: `Bearer ${token}`
+            //     }
+            // });
+            //Calling API using central JWT handling
+            const result = await apiFetch('/analyze');
+
+            // //JWT Expired or invalid
+            // if(response.status === 401){
+            //     logout();
+            //     return;
+            // }
+
+            // const result = await response.json();
+            // if(!response.ok){
+            //     throw new Error(result.error || 'Unauthorized');
+            // }
+
             setData(result);
         }
         catch(err){
@@ -52,7 +63,7 @@ function AnalyzePage() {
         }
     };
     fetchData();
-  }, []);
+  }, [token, logout]);
 
   if(error) return <div className='text-red-500'>{error}</div>
   if(!data) return <div>Loading...</div>

@@ -1,6 +1,8 @@
 import './App.css';
 import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { AuthProvider } from './context/AuthContext.jsx'
+
 
 import Loader from "./components/Loader";
 import LayoutWithNav from "./components/LayoutWithNav";
@@ -41,9 +43,11 @@ function AppRoutes() {
 
 function App() {
   return (
-    <Router>
-      <AppRoutes />
-    </Router>
+    <AuthProvider>
+      <Router>
+        <AppRoutes />
+      </Router>
+    </AuthProvider>
   );
 }
 

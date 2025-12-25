@@ -3,9 +3,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChartSimple, faIdBadge, faMagnifyingGlassChart, faCodeMerge, faXmark, faRightFromBracket, faCircleUser } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { circIn } from 'framer-motion';
 
 function Sidebar({ onSelect, className, onClose }) {
+
     const [active, setActive] = useState('dashboard');
 
     const [vizEnabled, setVizEnabled] = useState(() => {
@@ -46,9 +48,9 @@ function Sidebar({ onSelect, className, onClose }) {
     ];
 
     const navigate = useNavigate();
-    const handleLogOut = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+    const {logout} = useAuth();
+    const handleLogout = () => {
+        logout();
         navigate('/');
     };
 
@@ -112,7 +114,7 @@ function Sidebar({ onSelect, className, onClose }) {
                 </div>
             </div>
 
-            {/* SignUp in Desktop View */}
+            {/* SignUp/LogOut in Desktop View */}
             <div className=" hidden xl:flex flex-col w-full items-center text-[#aeb4ba] text-xl">
                 <button className='flex gap-2 items-center hover:text-gray-500 hover:cursor-pointer transition-all duration-300'>
                     <FontAwesomeIcon icon={faCircleUser} />
@@ -120,7 +122,10 @@ function Sidebar({ onSelect, className, onClose }) {
                 </button>
                 <hr className="w-full border-t border-gray-600 my-4" />
                 <div>
-                    <button className="flex gap-2 items-center text-red-400 hover:text-red-500 hover:cursor-pointer transition-all duration-300">
+                    <button className="flex gap-2 items-center text-red-400 hover:text-red-500 hover:cursor-pointer transition-all duration-300" onClick={() => {
+                        handleLogout();
+                        onClose?.(); // Close sidebar if onClose exists that is what the chaining operator(?.) does
+                    }}>
                         <FontAwesomeIcon icon={faRightFromBracket} />
                         Log out
                     </button>

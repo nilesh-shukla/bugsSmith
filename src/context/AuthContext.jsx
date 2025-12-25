@@ -1,51 +1,55 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
 
-export const AuthProvider = ({children}) => {
+export function AuthProvider({ children }) {
+
     const [user, setUser] = useState(null);
-    const [token, setToken]= useState(null);
+    const [token, setToken] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    //Auto-Login if token exists in localStorage
     useEffect(() => {
-        const storedToken = localStorage.getItem('token');
-        const storedUser = localStorage.getItem('user');
+        const storedToken = localStorage.getItem("token");
+        const storedUser = localStorage.getItem("user");
 
-        if(storedToken && storedUser){
-            setToken(storedToken);
-            setUser(JSON.parse(storedUser));
+        if (storedToken && storedUser) {
+        setToken(storedToken);
+        setUser(JSON.parse(storedUser));
         }
 
         setLoading(false);
     }, []);
 
-    //Login function
+    //LogIn function
     const login = (token, user) => {
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
         setToken(token);
         setUser(user);
     };
 
     //LogOut function
     const logout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        localStorage.clear();
         setToken(null);
         setUser(null);
     };
 
-    return(
+    return (
         <AuthContext.Provider
-            value={
-                {user, token, isAuthenticated: !!token, login, logout, loading}
-            }
+        value={{
+            user,
+            token,
+            isAuthenticated: !!token,
+            loading,
+            login,
+            logout
+        }}
         >
-                {children}
+        {children}
         </AuthContext.Provider>
     );
-};
+}
 
-//Custom hook for easy access to AuthContext
 export const useAuth = () => useContext(AuthContext);
