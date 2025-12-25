@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChartSimple, faIdBadge, faMagnifyingGlassChart, faCodeMerge, faXmark, faRightFromBracket, faCircleUser } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { circIn } from 'framer-motion';
 
 function Sidebar({ onSelect, className, onClose }) {
@@ -43,6 +44,13 @@ function Sidebar({ onSelect, className, onClose }) {
         { id: 'visualise', label: 'Visualise', icon: faChartSimple },
         { id: 'integerations', label: 'Integerations', icon: faCodeMerge }
     ];
+
+    const navigate = useNavigate();
+    const handleLogOut = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        navigate('/');
+    };
 
     return (
         <div className={`w-full flex flex-col gap-20 xl:gap-0 justify-normal xl:justify-between xl:rounded-l-3xl bg-gradient-to-br from-[#021f3b] to-[#3167b9] xl:bg-[#3568b45d] px-4 py-8 h-full ${className || ''}`}>

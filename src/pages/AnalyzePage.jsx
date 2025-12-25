@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
+import { useAuth } from '../context/AuthContext';
 
 import Sidebar from '../components/Sidebar';
 import Dashboard from '../Dashboard/Dashboard';
@@ -12,6 +14,48 @@ function AnalyzePage() {
 
   const [activePage, setActivePage] = useState("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  //Adding proper frontend route protection(Securing API calls)
+  const navigate = useNavigate();
+  const [data, setData] = useState(null);
+  const [error, setError] = useState('');
+  useEffect(() => {
+    const fetchData = async () => {
+        try{
+            //Before Calling token checking its existence
+            //const token = localStorage.getItem('token');
+            const { token } = useAuth();
+            if(!token){
+                navigate('/');
+                return;
+            }
+
+            //Calling API
+            const response = await fetch('http://localhost:5000/analyze',{
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            const result = await response.json();
+            if(!response.ok){
+                throw new Error(result.error || 'Unauthorized');
+            }
+            setData(result);
+        }
+        catch(err){
+            setError(err.message);
+
+            //Remove Invalid token
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            navigate('/');
+        }
+    };
+    fetchData();
+  }, []);
+
+  if(error) return <div className='text-red-500'>{error}</div>
+  if(!data) return <div>Loading...</div>
 
   const renderPage = () => {
     switch(activePage){
