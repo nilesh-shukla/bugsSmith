@@ -13,11 +13,16 @@ export function AuthProvider({ children }) {
         const storedToken = localStorage.getItem("token");
         const storedUser = localStorage.getItem("user");
 
-        if (storedToken && storedUser) {
-        setToken(storedToken);
-        setUser(JSON.parse(storedUser));
+        if (storedToken && storedUser && storedUser !== "undefined") {
+            try{
+                setToken(storedToken);
+                setUser(JSON.parse(storedUser));
+            }
+            catch(err){
+                console.error("Invalid auth data in storage");
+                localStorage.clear();
+            }
         }
-
         setLoading(false);
     }, []);
 

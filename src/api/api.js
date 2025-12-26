@@ -21,5 +21,10 @@ export async function apiFetch(endpoint, options = {}) {
     throw new Error('Session expired');
   }
 
+  if(!response.ok){
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Request failed');
+  }
+
   return response.json();
 }

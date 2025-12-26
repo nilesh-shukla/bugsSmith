@@ -2,40 +2,72 @@ import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faEnvelope, faLock, faTimes, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { apiFetch } from '../api/api';
+import { useNavigate } from 'react-router-dom';
 
 function CreateAccount({ asModal = false, onClose }) {
+
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState({});
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
+
     const usernameValid = /^[A-Za-z0-9_]{6,}$/.test(username);
+
     if (!firstName || !lastName || !username || !email || !password) {
       setError('Please fill in all required fields.');
+      setLoading(false);
       return;
     }
     if (!usernameValid) {
       setError('Username must be at least 6 characters and contain only letters, numbers, or underscores.');
+      setLoading(false);
       return;
     }
 
     if (password !== confirm) {
       setError('Passwords do not match.');
+      setLoading(false);
       return;
     }
-    setLoading(true);
-    setTimeout(() => {
+    
+    try{
+      const data = await apiFetch('/signup', {
+        method: 'POST',
+        body: JSON.stringify({
+          firstName, lastName, username, email, password
+        })
+      });
+
+      alert('Verification email sent.');
+      navigate('/verify-email');
+
+      //SUCCESS
+      if(typeof onClose === 'function') onClose();
+      
+      alert('Account created successfully');
+    }
+    catch(err){
+      if(err.message.includes('Email')) setError({ email: err.message });
+      else if(err.message.includes('Username')) setError({ username: err.message });
+      else setError({ general: err.message });
+    }
+    finally{
       setLoading(false);
-      // placeholder success behavior
-      if (typeof onClose === 'function') onClose();
-    }, 800);
+    }
   };
 
   const containerClass = asModal
@@ -56,7 +88,9 @@ function CreateAccount({ asModal = false, onClose }) {
         </div>
       </div>
 
-      {error && <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-4">{error}</div>}
+      {error.general && (
+        <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-4">{error.general}</div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-3">
         <div className="grid grid-cols-2 gap-3">
@@ -79,16 +113,27 @@ function CreateAccount({ asModal = false, onClose }) {
           <label className="text-sm text-[#9fc7e4] mb-1 block">Username</label>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8fc0e8]"><FontAwesomeIcon icon={faUser} /></span>
-            <input value={username} onChange={(e) => setUsername(e.target.value)} className="w-full pl-10 pr-3 py-2 rounded-xl bg-[#08172a] text-[#dff4ff] placeholder:text-[#6f9fbf] border border-white/5 focus:outline-none" placeholder="username_123" />
+            <input value={username} onChange={(e) => {
+              setUsername(e.target.value);
+              setError(prev => ({ ...prev, username: null }));
+              }} className="w-full pl-10 pr-3 py-2 rounded-xl bg-[#08172a] text-[#dff4ff] placeholder:text-[#6f9fbf] border border-white/5 focus:outline-none" placeholder="username_123" />
+            {error.username && (
+              <div className="text-red-500 text-sm mt-1">*{error.username}</div>
+            )}
           </div>
-          <p className="text-xs text-white mt-1"> *Allowed: letters, numbers, underscore. Min 6 characters.</p>
         </div>
 
         <div>
           <label className="text-sm text-[#9fc7e4] mb-1 block">Email</label>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8fc0e8]"><FontAwesomeIcon icon={faEnvelope} /></span>
-            <input value={email} onChange={(e) => setEmail(e.target.value)} className="w-full pl-10 pr-3 py-2 rounded-xl bg-[#08172a] text-[#dff4ff] placeholder:text-[#6f9fbf] border border-white/5 focus:outline-none" placeholder="you@example.com" />
+            <input value={email} onChange={(e) => {
+              setEmail(e.target.value);
+              setError(prev => ({ ...prev, email: null })); //If user types again the error message goes away
+              }} className="w-full pl-10 pr-3 py-2 rounded-xl bg-[#08172a] text-[#dff4ff] placeholder:text-[#6f9fbf] border border-white/5 focus:outline-none" placeholder="you@example.com" />
+            {error.email && (
+              <div className="text-red-500 text-sm mt-1">*{error.email}</div>
+            )}
           </div>
         </div>
 

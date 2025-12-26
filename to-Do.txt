@@ -4,3 +4,4 @@
 4. Add website name in the navigation when switching to phone view
 5. Add functionality like history in dashboard
 
+6. Add username in the sidebar
