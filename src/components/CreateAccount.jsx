@@ -52,13 +52,15 @@ function CreateAccount({ asModal = false, onClose }) {
         })
       });
 
-      alert('Verification email sent.');
-      navigate('/verify-email');
-
-      //SUCCESS
-      if(typeof onClose === 'function') onClose();
-      
-      alert('Account created successfully');
+      // If backend reports email send failure, show error to user
+      if (data && typeof data.message === 'string' && /failed/i.test(data.message)) {
+        setError(prev => ({ ...prev, general: data.message }));
+      } else {
+        // Normal success: instruct user to check their inbox
+        alert('Account created — please check your email for the verification link.');
+        if (typeof onClose === 'function') onClose();
+        navigate('/');
+      }
     }
     catch(err){
       if(err.message.includes('Email')) setError({ email: err.message });

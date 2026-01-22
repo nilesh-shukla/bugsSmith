@@ -7,6 +7,7 @@ import { AuthProvider } from './context/AuthContext.jsx'
 import Loader from "./components/Loader";
 import LayoutWithNav from "./components/LayoutWithNav";
 import Home from './components/Home';
+import VerifyEmail from './components/VerifyEmail';
 import Resources from './pages/Resources';
 import About from './pages/About';
 import Solutions from './pages/SolutionsPage';
@@ -31,6 +32,7 @@ function AppRoutes() {
     <Routes>
       <Route element={<LayoutWithNav />}>
         <Route path="/" element={<Home />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/resources" element={<Resources />} />
         <Route path="/about" element={<About />} />
         <Route path="/solutions" element={<Solutions />} />

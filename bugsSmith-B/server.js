@@ -76,44 +76,49 @@ app.post('/signup', async (req, res) => {
 
         const user = result.rows[0];
 
-        await sendVerificationEmail(user.email, verifyToken);
+        try {
+            await sendVerificationEmail(user.email, verifyToken);
+        } catch (emailErr) {
+            console.error('EMAIL SEND ERROR:', emailErr);
+            // Return partial success: user created but email failed
+            return res.status(201).json({
+                message: 'User created but verification email failed to send. Contact support.'
+            });
+        }
 
-        // await pool.query(
-        //     `UPDATE users 
-        //     SET email_verification_token = $1,
-        //     email_verification_expires = $2
-        //     WHERE id = $3`, [verifyToken, tokenExpiry, user.id]
-        // );
-
-        return res.status(201),json({
+        return res.status(201).json({
             message: 'Verification email sent. Please check your inbox.'
         });
 
-        // res.status(201).json({
-        //     token,
-        //     user
-        // });
     }
     catch(err) {
-        console.error(err);
+        console.error('SIGNUP ERROR:', err);
+        if (err && err.code === '23505') {
+            // Postgres unique_violation
+            return res.status(409).json({ error: 'Email or username already exists' });
+        }
         res.status(500).json({ error: 'Internal server error' });
     }
 });
 
-
 app.get('/verify-email', async (req, res) => {
-    const { token } = req.query;
+    try {
+        const { token } = req.query;
 
-    const result = await pool.query(
-        `UPDATE users 
-        SET email_verified = true,
-            email_verification_token = NULL,
-            email_verification_expires = NULL
-        WHERE email_verification_token = $1
-        AND 
-            email_verification_expires > NOW()
-        RETURNING id`, [token]
-    );
+        if (!token) {
+            return res.status(400).json({ error: 'Verification token is required' });
+        }
+
+        const result = await pool.query(
+            `UPDATE users 
+            SET email_verified = true,
+                email_verification_token = NULL,
+                email_verification_expires = NULL
+            WHERE email_verification_token = $1
+            AND 
+                email_verification_expires > NOW()
+            RETURNING id, email`, [token]
+        );
 
     if(result.rowCount === 0){
         return res.status(400).json({
@@ -121,7 +126,7 @@ app.get('/verify-email', async (req, res) => {
         });
     }
 
-    const user = result.rows[0];
+        const user = result.rows[0];
 
     const jwtToken = jwt.sign(
         { 
@@ -134,10 +139,11 @@ app.get('/verify-email', async (req, res) => {
         }
     );
 
-    res.json({
-        message: 'Email Verified',
-        token: jwtToken
-    });
+        return res.json({ message: 'Email Verified', token: jwtToken });
+    } catch (err) {
+        console.error('VERIFY EMAIL ERROR:', err);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
 });
 
 app.post('/login', async (req, res) => {
@@ -224,7 +230,7 @@ app.get('/analyze', auth, async (req, res) => {
         });
     }
     catch(err){
-        console.errpr('DASHBOARD ERROR: ', err);
+        console.error('DASHBOARD ERROR: ', err);
         res.status(500).json({
             error: 'Internal server error'
         });
