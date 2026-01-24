@@ -9,6 +9,7 @@ import jwt from 'jsonwebtoken';
 import pool from './database/index.js';
 import auth from './middleware/auth.js';
 import { sendVerificationEmail } from './utils/sendEmail.js';
+import { error } from 'console';
 
 const app = express();
 
@@ -102,9 +103,8 @@ app.post('/signup', async (req, res) => {
 });
 
 app.get('/verify-email', async (req, res) => {
+    const { token, redirect_to } = req.query;
     try {
-        const { token } = req.query;
-
         if (!token) {
             return res.status(400).json({ error: 'Verification token is required' });
         }
@@ -119,30 +119,118 @@ app.get('/verify-email', async (req, res) => {
                 email_verification_expires > NOW()
             RETURNING id, email`, [token]
         );
+        if(result.rowCount === 0){
+            if(redirect_to) {
+            return res.redirect(`${redirect_to}?status=error`);
+            }
+            return res.status(400).json({
+                error: 'Invalid or expired token'
+            })
+        }
+        const user = result.rows[0];
+        const jwtToken = jwt.sign(
+            { 
+                id: user.id,
+                email: user.email
+            },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: process.env.JWT_EXPIRES_IN
+            }
+        );
+        if(redirect_to) {
+            return res.redirect(`${redirect_to}?status=success`);
+        }
 
-    if(result.rowCount === 0){
-        return res.status(400).json({
-            error: 'Invalid or expired token'
+        return res.json({
+            message: 'Email verified successfully',
+            token: jwtToken
         });
     }
-
-        const user = result.rows[0];
-
-    const jwtToken = jwt.sign(
-        { 
-            id: user.id,
-            email: user.email
-        },
-        process.env.JWT_SECRET,
-        {
-            expiresIn: process.env.JWT_EXPIRES_IN
-        }
-    );
-
-        return res.json({ message: 'Email Verified', token: jwtToken });
-    } catch (err) {
+    catch (err) {
         console.error('VERIFY EMAIL ERROR:', err);
         return res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.get('/check-verification', async (req, res) => {
+    try{
+        const { email } =req.query;
+        if(!email) return res.status(400).json({
+            error: 'Email is required'
+        });
+
+        const result = await pool.query(
+            'SELECT email_verified FROM users WHERE email = $1', [email]
+        );
+
+        if(result.rows.length ===  0) {
+            return res.status(404).json({
+                error: 'User not found'
+            });
+        }
+        
+        return res.json({
+            verified: !!result.rows[0].email_verified
+        });
+    }
+    catch(err){
+        console.error('CHECK VERIFICATION ERROR:', err);
+        return res.status(500).json({
+            error: 'Internal server error'
+        });
+    }
+});
+
+app.post('/resend-verification', async (req, res) => {
+    try{
+        const { email } = req.body;
+        if(!email) return res.status(400).json({
+            error: 'Email is required'
+        });
+
+        const userRes = await pool.query(
+            'SELECT id, email_verified FROM users WHERE email = $1', [email]
+        );
+
+        if(userRes.rows.length === 0) {
+            return res.status(404).json({
+                error: 'User not found'
+            });
+        }
+
+        const user = userRes.rows[0];
+        if(user.email_verified) return res.status(400).json({ error: 'Email already verified' });
+
+        const verifyToken = crypto.randomBytes(32).toString('hex');
+        const tokenExpiry = new Date(Date.now() + 24*60*60*1000);
+
+        await pool.query(
+            `UPDATE users
+            SET email_verification_token = $1,
+                email_verification_expires = $2
+            WHERE id = $3`,
+            [verifyToken, tokenExpiry, user.id]
+        );
+
+        try {
+            await sendVerificationEmail(email, verifyToken);
+            return res.json({
+                message: 'Verification email sent. Please check you inbox.'
+            });
+        }
+        catch(emailErr) {
+            console.error('RESEND EMAIL ERROR:', emailErr);
+            return res.status(500).json({
+                error: 'Failed to send verification email'
+            });
+        }
+    }
+    catch(err) {
+        console.error('RESEND VERIFICATION ERROR:', err);
+        return res.status(500).json({
+            error: 'Internal server error'
+        });
     }
 });
 

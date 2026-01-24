@@ -52,14 +52,13 @@ function CreateAccount({ asModal = false, onClose }) {
         })
       });
 
-      // If backend reports email send failure, show error to user
+      //After successful signup
       if (data && typeof data.message === 'string' && /failed/i.test(data.message)) {
         setError(prev => ({ ...prev, general: data.message }));
       } else {
-        // Normal success: instruct user to check their inbox
-        alert('Account created — please check your email for the verification link.');
+        // Show pending page so user waits for email link
+        navigate(`/verify-pending?email=${encodeURIComponent(email)}`);
         if (typeof onClose === 'function') onClose();
-        navigate('/');
       }
     }
     catch(err){

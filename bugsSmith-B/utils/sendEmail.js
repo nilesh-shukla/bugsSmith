@@ -77,7 +77,10 @@ async function sendWithSendGrid(to, subject, html) {
 }
 
 export async function sendVerificationEmail(email, token) {
-    const verifyUrl = `http://localhost:5173/verify-email?token=${token}`;
+
+    const frontendBase = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const verifyUrl = `${frontendBase}/verify-pending?token=${token}&email=${encodeURIComponent(email)}`;
+
     const subject = 'Verify your email';
     const html = `
         <h2>Verify your email</h2>

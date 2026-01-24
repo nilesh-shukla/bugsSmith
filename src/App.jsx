@@ -14,6 +14,7 @@ import Solutions from './pages/SolutionsPage';
 import Contact from './pages/Contact';
 import AnalyzePage from './pages/AnalyzePage';
 import ProtectedRoute from './components/ProtectedRoute';
+import VerifyPending from './components/VerifyPending';
 
 function AppRoutes() {
   const location = useLocation();
@@ -38,6 +39,7 @@ function AppRoutes() {
         <Route path="/solutions" element={<Solutions />} />
         <Route path="/contact" element={<Contact />} />
       </Route>
+      <Route path='/verify-pending' element={<VerifyPending />} />
       <Route path="/analyze" element={<ProtectedRoute><AnalyzePage /></ProtectedRoute>} />
     </Routes>
   )
