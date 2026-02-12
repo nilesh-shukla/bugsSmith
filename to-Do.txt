@@ -5,3 +5,5 @@
 5. Add functionality like history in dashboard
 
 6. Add username in the sidebar
+
+7.

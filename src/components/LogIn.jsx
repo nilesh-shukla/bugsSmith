@@ -28,14 +28,6 @@ function LogIn({ asModal = false, onClose }) {
     
     try{
         setLoading(true);
-        
-        // const response = await fetch('http://localhost:5000/login',{
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify({ email, password }),
-        // });
 
         const data = await apiFetch('/login', {
           method: 'POST',

@@ -21,8 +21,8 @@ function VerifyEmail(){
       .then((data) => {
         setStatus('success');
         setMessage(data.message || 'Email verified successfully');
-        // redirect to home/login after short delay
-        setTimeout(() => navigate('/', { replace: true }), 2500);
+
+        setTimeout(() => navigate('/', { replace: true }), 5000);
       })
       .catch((err) => {
         setStatus('error');
@@ -40,3 +40,5 @@ function VerifyEmail(){
 }
 
 export default VerifyEmail;
+
+
