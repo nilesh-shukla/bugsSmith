@@ -9,7 +9,9 @@ import jwt from 'jsonwebtoken';
 import pool from './database/index.js';
 import auth from './middleware/auth.js';
 import { sendVerificationEmail } from './utils/sendEmail.js';
-import { error } from 'console';
+import { fileURLToPath } from 'url';
+import path from 'path';
+import fs from 'fs';
 
 const app = express();
 
@@ -67,7 +69,7 @@ app.post('/signup', async (req, res) => {
         const verifyToken = crypto.randomBytes(32).toString('hex');
         const tokenExpiry = new Date(Date.now() + 24*60*60*1000);
 
-        //Verified email inserted in database
+        //Insert user with verification token
         const result = await pool.query(
             `INSERT INTO users (first_name, last_name, username, email, password_hash, email_verified, email_verification_token, email_verification_expires)
             VALUES ($1, $2, $3, $4, $5, false, $6, $7)
@@ -81,7 +83,7 @@ app.post('/signup', async (req, res) => {
             await sendVerificationEmail(user.email, verifyToken);
         } catch (emailErr) {
             console.error('EMAIL SEND ERROR:', emailErr);
-            // Return partial success: user created but email failed
+            // Partial success: user created but email failed
             return res.status(201).json({
                 message: 'User created but verification email failed to send. Contact support.'
             });
@@ -119,15 +121,18 @@ app.get('/verify-email', async (req, res) => {
                 email_verification_expires > NOW()
             RETURNING id, email`, [token]
         );
+
         if(result.rowCount === 0){
             if(redirect_to) {
-            return res.redirect(`${redirect_to}?status=error`);
+                return res.redirect(`${redirect_to}?status=error`);
             }
             return res.status(400).json({
                 error: 'Invalid or expired token'
-            })
+            });
         }
+
         const user = result.rows[0];
+
         const jwtToken = jwt.sign(
             { 
                 id: user.id,
@@ -138,6 +143,7 @@ app.get('/verify-email', async (req, res) => {
                 expiresIn: process.env.JWT_EXPIRES_IN
             }
         );
+
         if(redirect_to) {
             return res.redirect(`${redirect_to}?status=success`);
         }
@@ -216,7 +222,7 @@ app.post('/resend-verification', async (req, res) => {
         try {
             await sendVerificationEmail(email, verifyToken);
             return res.json({
-                message: 'Verification email sent. Please check you inbox.'
+                message: 'Verification email sent. Please check your inbox.'
             });
         }
         catch(emailErr) {
@@ -324,6 +330,34 @@ app.get('/analyze', auth, async (req, res) => {
         });
     }
 });
+
+//
+// Serve frontend build and SPA fallback if a built frontend exists
+//
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const frontendDist = path.join(__dirname, '../frontend/dist');
+
+if (fs.existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+
+        // SPA fallback after API routes
+        app.use((req, res) => {
+            // If the request looks like an API route, return 404 JSON
+            if (req.path.startsWith('/signup') ||
+                    req.path.startsWith('/login') ||
+                    req.path.startsWith('/api') ||
+                    req.path.startsWith('/verify-email') ||
+                    req.path.startsWith('/resend-verification') ||
+                    req.path.startsWith('/check-verification')) {
+                return res.status(404).json({ error: 'Not found' });
+            }
+            // Otherwise serve the SPA index
+            return res.sendFile(path.join(frontendDist, 'index.html'));
+        });
+} else {
+  console.warn('Frontend dist not found at', frontendDist, '- static serving skipped.');
+}
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
