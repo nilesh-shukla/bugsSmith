@@ -336,27 +336,40 @@ app.get('/analyze', auth, async (req, res) => {
 //
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const frontendDist = path.join(__dirname, '../frontend/dist');
+// Support both Vite (`dist`) and CRA-style (`build`) output folders.
+const possibleFrontends = [
+    path.join(__dirname, '../frontend/dist'),
+    path.join(__dirname, '../frontend/build')
+];
 
-if (fs.existsSync(frontendDist)) {
-  app.use(express.static(frontendDist));
+let servedFrontend = null;
+for (const p of possibleFrontends) {
+    if (fs.existsSync(p)) {
+        servedFrontend = p;
+        break;
+    }
+}
 
-        // SPA fallback after API routes
-        app.use((req, res) => {
-            // If the request looks like an API route, return 404 JSON
-            if (req.path.startsWith('/signup') ||
-                    req.path.startsWith('/login') ||
-                    req.path.startsWith('/api') ||
-                    req.path.startsWith('/verify-email') ||
-                    req.path.startsWith('/resend-verification') ||
-                    req.path.startsWith('/check-verification')) {
-                return res.status(404).json({ error: 'Not found' });
-            }
-            // Otherwise serve the SPA index
-            return res.sendFile(path.join(frontendDist, 'index.html'));
-        });
+if (servedFrontend) {
+    console.log('Serving frontend static from', servedFrontend);
+    app.use(express.static(servedFrontend));
+
+    // SPA fallback after API routes
+    app.use((req, res) => {
+        // If the request looks like an API route, return 404 JSON
+        if (req.path.startsWith('/signup') ||
+                req.path.startsWith('/login') ||
+                req.path.startsWith('/api') ||
+                req.path.startsWith('/verify-email') ||
+                req.path.startsWith('/resend-verification') ||
+                req.path.startsWith('/check-verification')) {
+            return res.status(404).json({ error: 'Not found' });
+        }
+        // Otherwise serve the SPA index
+        return res.sendFile(path.join(servedFrontend, 'index.html'));
+    });
 } else {
-  console.warn('Frontend dist not found at', frontendDist, '- static serving skipped.');
+    console.warn('No frontend build found (checked dist and build) - static serving skipped.');
 }
 
 const PORT = process.env.PORT || 5000;
