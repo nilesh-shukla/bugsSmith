@@ -15,8 +15,19 @@ import fs from 'fs';
 
 const app = express();
 
+const rawAllowedOrigins = process.env.FRONTEND_URLS || process.env.FRONTEND_URL || 'http://localhost:5173';
+const allowedOrigins = rawAllowedOrigins.split(',').map(s => s.trim()).filter(Boolean);
+
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    origin: function (origin, callback) {
+        
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+        console.warn('Blocked CORS request from origin:', origin);
+        return callback(new Error('Not allowed by CORS'));
+    },
     credentials: true
 }));
 app.use(express.json());
