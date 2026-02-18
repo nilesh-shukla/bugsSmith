@@ -15,7 +15,7 @@ import fs from 'fs';
 
 const app = express();
 
-const rawAllowedOrigins = process.env.FRONTEND_URLS || process.env.FRONTEND_URL || 'http://localhost:5173';
+const rawAllowedOrigins = process.env.FRONTEND_URLS || process.env.FRONTEND_URL || 'http://localhost:5173,http://localhost:5174';
 const allowedOrigins = rawAllowedOrigins.split(',').map(s => s.trim()).filter(Boolean);
 
 app.use(cors({

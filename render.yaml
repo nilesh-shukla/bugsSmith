@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: bugssmith-backend
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: "npm install && cd frontend && npm install && npm run build"
+    startCommand: "cd bugsSmith-B && npm start"
+    envVars:
+      - key: DATABASE_URL
+        # value: postgres://user:pass@host:5432/dbname
+      - key: JWT_SECRET
+        # value: your_jwt_secret_here
+      - key: FRONTEND_URLS
+        # value: https://bugs-smith.vercel.app,https://bugssmith.onrender.com
+      - key: VITE_API_URL
+        # value: https://bugssmith.onrender.com
+      - key: SENDGRID_API_KEY
+        # value: sg_xxx or leave blank if using SMTP
+      - key: SENDGRID_FROM
+        # value: no-reply@yourdomain.com
