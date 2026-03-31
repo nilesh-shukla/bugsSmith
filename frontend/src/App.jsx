@@ -10,6 +10,10 @@ import About from './pages/About';
 import Solutions from './pages/SolutionsPage';
 import Contact from './pages/Contact';
 import AnalyzePage from './pages/AnalyzePage';
+import AuthLanding from './pages/AuthLanding';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import { AuthProvider } from './contexts/AuthContext';
 
 function AppRoutes() {
   const location = useLocation();
@@ -26,6 +30,10 @@ function AppRoutes() {
   // Normally we would keep this return statement inside App() function but due to "useLocation()" which is used as a router, we need to keep the rouoting outside for it to render inside.
   return (
     <Routes>
+      {/* Public auth landing and nested auth pages */}
+      <Route path="/auth" element={<AuthLanding/>} />
+      <Route path="/auth/login" element={<Login/>} />
+      <Route path="/auth/signup" element={<Signup/>} />
       <Route element={<LayoutWithNav />}>
         <Route path="/" element={<Home />} />
         <Route path="/resources" element={<Resources />} />
@@ -41,7 +49,9 @@ function AppRoutes() {
 function App() {
   return (
     <Router>
-      <AppRoutes />
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
     </Router>
   );
 }

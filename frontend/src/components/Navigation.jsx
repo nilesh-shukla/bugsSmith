@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleDown, faEllipsisV, faTimes, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons';
+import { faAngleDown, faEllipsisV, faPerson, faTimes, faUser, faUserCircle, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons';
+import { useAuth } from '../contexts/AuthContext';
 
 function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
+  const { user, logout } = useAuth();
   const menuVariants = {
     hidden: { height: 0, opacity: 0 },
     visible: {
@@ -55,6 +57,19 @@ function Navigation() {
             <Link to="/about" className="text-[#9ebedf] hover:text-white transition-all duration-300 ease-in-out font-medium">About Us</Link>
             <Link to="/resources" className="text-[#9ebedf] hover:text-white transition-all duration-500 ease-in-out font-medium">Resources</Link>
             <Link to="/contact" className="text-[#9ebedf] hover:text-white transition-all duration-300 ease-in-out font-medium">Contact Us</Link>
+            {/* Auth CTAs */}
+            {user ? (
+              <div className='flex items-center gap-4'>
+                <span className='text-white font-medium'>Hi, {user.name}</span>
+                <button onClick={logout} className='px-3 py-1 bg-white/10 rounded-full text-sm text-white'>Log out</button>
+              </div>
+            ) : (
+              <div className='flex items-center gap-3'>
+                <Link to="/auth/login" className='text-[#9ebedf] hover:text-white transition-all duration-200 ease-in-out text-2xl rounded-full flex items-center gap-1'>
+                <FontAwesomeIcon icon={faUserCircle} />
+                </Link>
+              </div>
+            )}
           </div>
           
           {/* MENU */}
@@ -103,6 +118,9 @@ function Navigation() {
                   </Link>
                 </motion.li>
               ))}
+              <motion.li variants={itemVariants} className="w-full">
+                <Link to="/auth/login" className="block w-full py-2 hover:text-blue-500" onClick={()=>setIsOpen(false)}>Log in</Link>
+              </motion.li>
           </motion.ul>
           <Link to={'/analyze'}>
             <button className='w-full mt-4 bg-gradient-to-r from-[#047be3] via-[#7856e7] to-[#b514e1] hover:scale-110 transition-all duration-200 group py-2 cursor-pointer rounded-full text-white font-semibold'>
