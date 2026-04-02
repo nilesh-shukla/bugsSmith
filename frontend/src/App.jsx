@@ -10,6 +10,7 @@ import About from './pages/About';
 import Solutions from './pages/SolutionsPage';
 import Contact from './pages/Contact';
 import AnalyzePage from './pages/AnalyzePage';
+import RequireAuth from './components/RequireAuth';
 import AuthLanding from './pages/AuthLanding';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -41,7 +42,7 @@ function AppRoutes() {
         <Route path="/solutions" element={<Solutions />} />
         <Route path="/contact" element={<Contact />} />
       </Route>
-      <Route path="/analyze" element={<AnalyzePage />} />
+      <Route path="/analyze" element={<RequireAuth><AnalyzePage /></RequireAuth>} />
     </Routes>
   );
 }

@@ -35,7 +35,7 @@ function Navigation() {
           </Link>
 
           {/* Options */}
-          <div className='hidden xl:flex items-center gap-6'>
+          <div className='hidden xl:flex items-center gap-4'>
 
             {/* Solution Links */}
             <div className="text-[#9ebedf] hover:text-white group transition-all duration-300 ease-in-out font-medium group-hover:cursor-pointer">
