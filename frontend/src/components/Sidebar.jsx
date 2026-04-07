@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChartSimple, faIdBadge, faMagnifyingGlassChart, faCodeMerge, faXmark, faRightFromBracket, faCircleUser } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
@@ -13,6 +14,8 @@ function Sidebar({ onSelect, className, onClose }) {
         { id: 'integerations', label: 'Integerations', icon: faCodeMerge }
     ];
 
+    const { user, logout } = useAuth();
+
     return (
         <div className={`w-full flex flex-col gap-20 xl:gap-0 justify-normal xl:justify-between xl:rounded-l-3xl bg-gradient-to-br from-[#021f3b] to-[#3167b9] xl:bg-[#3568b45d] px-4 py-8 h-full ${className || ''}`}>
 
@@ -26,10 +29,17 @@ function Sidebar({ onSelect, className, onClose }) {
                     <div className="hidden xl:block" />
 
                     <div>
-                        <button className="flex gap-2 items-center">
-                            <FontAwesomeIcon icon={faRightFromBracket} />
-                            Log out
-                        </button>
+                        {user ? (
+                            <button onClick={() => { logout(); onClose && onClose(); }} className="flex gap-2 items-center">
+                                <FontAwesomeIcon icon={faRightFromBracket} />
+                                Log out
+                            </button>
+                        ) : (
+                            <Link to="/auth/login" className="flex gap-2 items-center">
+                                <FontAwesomeIcon icon={faRightFromBracket} />
+                                Login
+                            </Link>
+                        )}
                     </div>
                 </div>
 
@@ -65,19 +75,31 @@ function Sidebar({ onSelect, className, onClose }) {
             </div>
 
             {/* SignUp in Desktop View */}
-            <div className=" hidden xl:flex flex-col w-full items-center text-[#aeb4ba] text-xl">
-                <button className='flex gap-2 items-center hover:text-gray-500 hover:cursor-pointer transition-all duration-300'>
-                    <FontAwesomeIcon icon={faCircleUser} />
-                    User
-                </button>
-                <hr className="w-full border-t border-gray-600 my-4" />
-                <div>
-                    <button className="flex gap-2 items-center text-red-400 hover:text-red-500 hover:cursor-pointer transition-all duration-300">
-                        <FontAwesomeIcon icon={faRightFromBracket} />
-                        Log out
-                    </button>
+                <div className=" hidden xl:flex flex-col w-full items-center text-[#aeb4ba] text-xl">
+                    {user ? (
+                        <>
+                            <div className='flex flex-col items-center'>
+                                <FontAwesomeIcon icon={faCircleUser} className='text-4xl mb-2' />
+                                <div className='text-white font-semibold'>{user.name || user.email}</div>
+                                <div className='text-sm text-gray-300'>{user.role}</div>
+                            </div>
+                            <hr className="w-full border-t border-gray-600 my-4" />
+                            <div>
+                                <button onClick={() => logout()} className="flex gap-2 items-center text-red-400 hover:text-red-500 hover:cursor-pointer transition-all duration-300">
+                                    <FontAwesomeIcon icon={faRightFromBracket} />
+                                    Log out
+                                </button>
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <Link to="/auth/login" className='flex gap-2 items-center hover:text-gray-500 hover:cursor-pointer transition-all duration-300'>
+                                <FontAwesomeIcon icon={faCircleUser} />
+                                Login
+                            </Link>
+                        </>
+                    )}
                 </div>
-            </div>
         </div>
     );
 }
