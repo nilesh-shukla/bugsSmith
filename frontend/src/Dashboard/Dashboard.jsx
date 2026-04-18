@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEarthAsia, faPeopleLine, faRobot, faSkull, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faEarthAsia, faPeopleLine, faRobot, faSkull, faPlus, faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
 
 import Features from './dashboard-Component/Features';
 import Visualise from './Visualise';
@@ -25,14 +25,19 @@ const time = [
   { label: "Yearly" }
 ];
 
-function Dashboard() {
+function Dashboard({ openSidebar }) {
   return (
     <div className='relative' >
       <img src="/dashboard-bg/dashboard.png" alt="" className='absolute opacity-30 w-full h-full z-0' />
       <div className='relative p-2 py-8 xl:pl-14 xl:pr-4 xl:py-4'>
         {/* Heading Section */}
         <div className='w-full flex justify-between items-center mb-10'>
-          <h1 className='text-4xl md:text-[2.8rem] text-white font-semibold' style={{fontWeight: 400}}>Dashboard</h1>
+          <div className='flex items-center'>
+            <button onClick={openSidebar} className='block xl:hidden text-2xl p-2 text-white' aria-label='Open sidebar'>
+              <FontAwesomeIcon icon={faEllipsisVertical} />
+            </button>
+            <h1 className='text-4xl md:text-[2.8rem] text-white font-semibold' style={{fontWeight: 400}}>Dashboard</h1>
+          </div>
           <button className='w-auto xl:w-1/8 px-3 py-2 flex justify-between text-lg text-white bg-blue-600 rounded-xl items-center cursor-pointer hover:bg-blue-400 transition-all duration-150'>
             <span className='hidden md:block'>Add File</span>
             <FontAwesomeIcon icon={faPlus} className='md:mr-2 text-base'/>

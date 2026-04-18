@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function Signup() {
-  const [name, setName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('viewer');
@@ -17,7 +18,7 @@ export default function Signup() {
     setLoading(true);
     setError('');
     try {
-      await signup({ name, email, password, role });
+      await signup({ firstName, lastName, email, password, role });
       // auto-login after successful signup
       await login({ email, password });
       navigate('/analyze');
@@ -32,8 +33,16 @@ export default function Signup() {
     <div className="min-h-screen flex items-center justify-center px-6 py-12">
       <form onSubmit={handleSubmit} className="w-full max-w-md bg-white/5 backdrop-blur-md rounded-2xl p-8">
         <h3 className="text-2xl font-semibold text-white mb-4">Create an account</h3>
-        <label className="block text-sm text-[#9ebedf] mb-1">Name</label>
-        <input value={name} onChange={(e)=>{ setName(e.target.value); setError(''); }} required type="text" className="w-full mb-4 p-2 rounded-md bg-transparent border border-white/10" />
+        <div className="flex gap-2">
+          <div className="w-1/2">
+            <label className="block text-sm text-[#9ebedf] mb-1">First name</label>
+            <input value={firstName} onChange={(e)=>{ setFirstName(e.target.value); setError(''); }} required type="text" className="w-full mb-4 p-2 rounded-md bg-transparent border border-white/10" />
+          </div>
+          <div className="w-1/2">
+            <label className="block text-sm text-[#9ebedf] mb-1">Last name</label>
+            <input value={lastName} onChange={(e)=>{ setLastName(e.target.value); setError(''); }} required type="text" className="w-full mb-4 p-2 rounded-md bg-transparent border border-white/10" />
+          </div>
+        </div>
         <label className="block text-sm text-[#9ebedf] mb-1">Email</label>
         <input value={email} onChange={(e)=>setEmail(e.target.value)} required type="email" className="w-full mb-4 p-2 rounded-md bg-transparent border border-white/10" />
         <label className="block text-sm text-[#9ebedf] mb-1">Password</label>

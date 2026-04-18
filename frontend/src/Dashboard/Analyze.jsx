@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useEffect } from "react"
 import Select from 'react-select'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faDownload, faGavel, faL, faArrowsRotate } from "@fortawesome/free-solid-svg-icons"
+import { faDownload, faGavel, faL, faArrowsRotate, faEllipsisVertical } from "@fortawesome/free-solid-svg-icons"
 import FileReaderSimulator from "./dashboard-Component/FileReaderSimulator"
 import FileFeatureCards from "./dashboard-Component/FileFeatureCards"
 import StraightLineMeter from "./dashboard-Component/StraightLineMeter"
@@ -9,7 +9,7 @@ import { p, title } from "framer-motion/client"
 
 const API_URL = 'http://127.0.0.1:8000/batch-predict';
 
-function Analyze() {
+function Analyze({ openSidebar }) {
 
   const [fileName, setFileName] = useState("Smith Here");
   const [selectedFile, setSelectedFile] = useState(null);
@@ -204,9 +204,14 @@ function Analyze() {
       <img src="/dashboard-bg/dashboard.png" className='absolute opacity-30 w-full h-full z-0 object-cover' />
       <div className='relative p-2 py-8 xl:px-12 xl:py-4 space-y-4 z-20'>
         <div className='flex justify-between items-center mb-6 w-full'>
-          <div className="space-y-2 md:space-y-0 w-52 md:w-auto">
-            <h1 className="text-4xl md:text-[3rem] text-white font-semibold">Analyze</h1>
-            <p className="text-xs md:text-sm xl:text-base text-[#789]">We analyze digital footprints to separate genuine users from imposters.</p>
+          <div className="space-y-2 md:space-y-0 w-52 md:w-auto flex items-center">
+            <button onClick={openSidebar} className='block xl:hidden text-2xl p-2 text-white' aria-label='Open sidebar'>
+              <FontAwesomeIcon icon={faEllipsisVertical} />
+            </button>
+            <div>
+              <h1 className="text-4xl md:text-[3rem] text-white font-semibold">Analyze</h1>
+              <p className="hidden sm:block text-xs md:text-sm xl:text-base text-[#789]">We analyze digital footprints to separate genuine users from imposters.</p>
+            </div>
           </div>
           <button className='flex gap-1 px-3 py-2 justify-between items-center bg-[#06539f] cursor-pointer hover:bg-blue-400 transition-all duration-150 text-white rounded-xl w-auto xl:w-36 text-lg' onClick={handleRefresh}>
             <span className="hidden md:block">Refresh</span>

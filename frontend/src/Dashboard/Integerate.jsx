@@ -2,7 +2,7 @@ import React from 'react'
 import Select from 'react-select'
 import IntegerateCard from './dashboard-Component/IntegerateCard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faS, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faS, faSearch, faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
 import { div, label } from 'framer-motion/client';
 
 const integrate = [
@@ -12,7 +12,7 @@ const integrate = [
   { label: "Other", value: "other" }
 ];
 
-function Integrate() {
+function Integrate({ openSidebar }) {
   return (
     <div className="relative">
       <img src="/dashboard-bg/analyze.png" className='absolute opacity-15 w-full h-full z-0 object-cover' />
@@ -22,9 +22,14 @@ function Integrate() {
           <h1 className='text-2xl text-[#9cc0e4]'>BugsSmith</h1>
         </div>
 
-        <div className='flex flex-col'>
-          <h1 className='text-[2.8rem] text-[#b5c7d9] text-center'>Explore Integrations</h1>
-          <p className='text-base text-white text-center'>Our integrations make it easy to work with the applications you and your organisation already love.</p>
+        <div className='flex flex-col items-center'>
+          <div className='flex items-center'>
+            <button onClick={openSidebar} className='block xl:hidden text-2xl p-2 text-white' aria-label='Open sidebar'>
+              <FontAwesomeIcon icon={faEllipsisVertical} />
+            </button>
+            <h1 className='text-[2.8rem] text-[#b5c7d9] text-center'>Explore Integrations</h1>
+          </div>
+          <p className='hidden sm:block text-base text-white text-center'>Our integrations make it easy to work with the applications you and your organisation already love.</p>
         </div>
 
         <div className='flex gap-4 items-center justify-center'>

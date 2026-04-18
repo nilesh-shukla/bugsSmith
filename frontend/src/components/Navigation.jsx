@@ -1,13 +1,33 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleDown, faEllipsisV, faPerson, faTimes, faUser, faUserCircle, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons';
+import { faAngleDown, faEllipsisV, faPerson, faTimes, faUser, faUserCircle, faWandMagicSparkles, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../contexts/AuthContext';
 
 function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const { user, logout } = useAuth();
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef(null);
+
+  const displayName = user ? (user.firstName && user.firstName.trim() ? user.firstName.trim() : (user.name && user.name.trim() ? user.name.trim() : 'User')) : '';
+  const initial = displayName ? displayName.charAt(0).toUpperCase() : 'U';
+
+  useEffect(() => {
+    function handleClick(e) {
+      if (profileRef.current && !profileRef.current.contains(e.target)) setProfileOpen(false);
+    }
+    function handleKey(e) {
+      if (e.key === 'Escape') setProfileOpen(false);
+    }
+    document.addEventListener('click', handleClick);
+    document.addEventListener('keydown', handleKey);
+    return () => {
+      document.removeEventListener('click', handleClick);
+      document.removeEventListener('keydown', handleKey);
+    };
+  }, []);
   const menuVariants = {
     hidden: { height: 0, opacity: 0 },
     visible: {
@@ -59,14 +79,40 @@ function Navigation() {
             <Link to="/contact" className="text-[#9ebedf] hover:text-white transition-all duration-300 ease-in-out font-medium">Contact Us</Link>
             {/* Auth CTAs */}
             {user ? (
-              <div className='flex items-center gap-4'>
-                <span className='text-white font-medium'>Hi, {user.name}</span>
-                <button onClick={logout} className='px-3 py-1 bg-white/10 rounded-full text-sm text-white'>Log out</button>
+              <div className='relative' ref={profileRef}>
+                <button
+                  onClick={() => setProfileOpen(p => !p)}
+                  aria-haspopup="true"
+                  aria-expanded={profileOpen}
+                  className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white font-semibold"
+                >
+                  {initial}
+                </button>
+
+                {profileOpen && (
+                  <div className="absolute right-0 mt-2 w-56 bg-white/5 backdrop-blur-sm rounded-md py-2 shadow-lg z-50 text-white">
+                    <div className="px-4 py-2">
+                      <div className="font-semibold text-sm truncate">{displayName || user.email}</div>
+                      <div className="text-xs text-gray-300 truncate">{user.email}</div>
+                      <div className="text-xs text-gray-400 mt-1">{user.role}</div>
+                    </div>
+                    <hr className="border-t border-white/10 my-1" />
+                    <div className="px-2">
+                      <button
+                        onClick={() => { setProfileOpen(false); logout(); }}
+                        className="w-full text-left px-4 py-2 text-sm hover:bg-white/10 transition-colors flex items-center"
+                      >
+                        <FontAwesomeIcon icon={faRightFromBracket} className="mr-2" />
+                        Log out
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <div className='flex items-center gap-3'>
                 <Link to="/auth/login" className='text-[#9ebedf] hover:text-white transition-all duration-200 ease-in-out text-2xl rounded-full flex items-center gap-1'>
-                <FontAwesomeIcon icon={faUserCircle} />
+                  <FontAwesomeIcon icon={faUserCircle} />
                 </Link>
               </div>
             )}

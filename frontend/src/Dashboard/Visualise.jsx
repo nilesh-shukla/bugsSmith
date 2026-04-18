@@ -1,11 +1,11 @@
 import React, {useState, useEffect} from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
+import { faArrowsRotate, faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
 import { ScatterChart, Scatter, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer} from 'recharts';
 
 const VIZ_URL = 'http://127.0.0.1:8000/viz-data';
 
-function Visualise({vizData: initialVizData = null}) {
+function Visualise({vizData: initialVizData = null, openSidebar}) {
 
   const [vizData, setVizData] = useState(() => {
     try {
@@ -75,9 +75,14 @@ function Visualise({vizData: initialVizData = null}) {
 
       <div className="relative p-2 py-8 xl:px-8 xl:py-6">
         <div className='flex justify-between items-center mb-6 w-full'>
-          <div className='space-y-2 md:space-y-0 w-52 md:w-auto'>
-            <h1 className="text-4xl md:text-[3rem] text-white font-semibold">Visualise</h1>
-            <p className="text-xs md:text-sm xl:text-base text-[#789]">A concise view of dataset distributions and relationships.</p>
+          <div className='space-y-2 md:space-y-0 w-52 md:w-auto flex items-center'>
+            <button onClick={openSidebar} className='block xl:hidden text-2xl p-2 text-white' aria-label='Open sidebar'>
+              <FontAwesomeIcon icon={faEllipsisVertical} />
+            </button>
+            <div>
+              <h1 className="text-4xl md:text-[3rem] text-white font-semibold">Visualise</h1>
+              <p className="hidden sm:block text-xs md:text-sm xl:text-base text-[#789]">A concise view of dataset distributions and relationships.</p>
+            </div>
           </div>
           <button
             className='flex gap-1 px-3 py-2 justify-between items-center bg-[#06539f] cursor-pointer hover:bg-blue-400 transition-all duration-150 text-white rounded-xl w-auto xl:w-36 text-lg' onClick={() => {

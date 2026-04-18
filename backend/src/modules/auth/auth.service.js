@@ -2,12 +2,12 @@ const bcryptService = require('./password.service');
 const tokenService = require('./token.service');
 const repository = require('./auth.repository');
 
-async function createUser({ name, email, password, role }) {
+async function createUser({ firstName, lastName, email, password, role }) {
   const exists = await repository.getUserByEmail(email);
   if (exists) throw new Error('Email already in use');
   const hashed = await bcryptService.hashPassword(password);
-  const user = await repository.createUser({ name, email, password: hashed, role: role || 'viewer' });
-  return { id: user.id, email: user.email, role: user.role };
+  const user = await repository.createUser({ firstName, lastName, email, password: hashed, role: role || 'viewer' });
+  return { id: user.id, email: user.email, role: user.role, firstName: user.firstName, lastName: user.lastName };
 }
 
 async function authenticateUser({ email, password }) {
@@ -18,7 +18,7 @@ async function authenticateUser({ email, password }) {
   const accessToken = tokenService.generateAccessToken({ userId: user.id, role: user.role });
   const refreshToken = tokenService.generateRefreshToken({ userId: user.id, role: user.role });
   await repository.saveRefreshToken({ token: refreshToken, userId: user.id, expiresAt: tokenService.getRefreshExpiryDate() });
-  return { user: { id: user.id, email: user.email, role: user.role }, accessToken, refreshToken };
+  return { user: { id: user.id, email: user.email, role: user.role, firstName: user.firstName, lastName: user.lastName }, accessToken, refreshToken };
 }
 
 async function refreshAccessToken(refreshToken) {
@@ -36,7 +36,7 @@ async function revokeRefreshToken(refreshToken) {
 async function getUserById(id) {
   const user = await repository.getUserById(id);
   if (!user) throw new Error('User not found');
-  return { id: user.id, email: user.email, role: user.role };
+  return { id: user.id, email: user.email, role: user.role, firstName: user.firstName, lastName: user.lastName };
 }
 
 module.exports = { createUser, authenticateUser, refreshAccessToken, revokeRefreshToken, getUserById };

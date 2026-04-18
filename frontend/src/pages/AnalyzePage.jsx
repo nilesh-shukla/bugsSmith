@@ -16,13 +16,13 @@ function AnalyzePage() {
   const renderPage = () => {
     switch(activePage){
         case "analyze":
-            return <Analyze />;
+            return <Analyze openSidebar={() => setSidebarOpen(true)} />;
         case "visualise":
-            return <Visualise />;
+            return <Visualise openSidebar={() => setSidebarOpen(true)} />;
         case "integerations":
-            return <Integerate />;
+            return <Integerate openSidebar={() => setSidebarOpen(true)} />;
         default:
-            return <Dashboard />;
+            return <Dashboard openSidebar={() => setSidebarOpen(true)} />;
     }
   }
 
@@ -35,9 +35,7 @@ function AnalyzePage() {
                     <Sidebar onSelect={setActivePage} onClose={() => setSidebarOpen(false)} />
                 </div>
 
-                <button className='block xl:hidden fixed top-1/2 left-0 z-40 p-3 md:p-6 bg-[#163c7a] text-white rounded-r-2xl' onClick={() => setSidebarOpen(true)} aria-label='Open sidebar'>
-                    <FontAwesomeIcon icon={faEllipsisVertical} className='text-3xl' />
-                </button>
+                {/* Mobile menu: moved inline into page headings; fixed button removed */}
 
 
                 {/* Desktop Sidebar */}

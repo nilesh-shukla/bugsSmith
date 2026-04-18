@@ -5,8 +5,8 @@ async function getUserByEmail(email) {
   return prisma.user.findUnique({ where: { email } });
 }
 
-async function createUser({ name, email, password, role }) {
-  return prisma.user.create({ data: { name, email, password, role } });
+async function createUser({ firstName, lastName, email, password, role }) {
+  return prisma.user.create({ data: { firstName, lastName, email, password, role } });
 }
 
 async function getUserById(id) {

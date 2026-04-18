@@ -11,8 +11,8 @@
     "test:auth": "node ./tests/auth.test.js"
   },
   "dependencies": {
-    "@prisma/client": "^5.10.1",
-    "bcrypt": "^5.1.0",
+    "@prisma/client": "^4.16.2",
+    "bcrypt": "^6.0.0",
     "body-parser": "^1.20.2",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -23,6 +23,6 @@
   },
   "devDependencies": {
     "nodemon": "^3.0.1",
-    "prisma": "^5.10.1"
+    "prisma": "^4.16.2"
   }
 }
