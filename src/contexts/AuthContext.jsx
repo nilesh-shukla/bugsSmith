@@ -2,39 +2,6 @@ import React, { createContext, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../api/axios';
 
-function parseAxiosError(err) {
-  if (!err) return 'Unknown error';
-  // Prefer server response payloads
-  const resp = err?.response?.data;
-  if (!resp) return err?.message || String(err);
-  if (typeof resp === 'string') return resp;
-  if (typeof resp === 'object') {
-    if (typeof resp.message === 'string' && resp.message.trim()) return resp.message;
-    if (typeof resp.error === 'string' && resp.error.trim()) return resp.error;
-    const maybeErrors = resp.errors || resp.error || resp.messages || resp.errorsList;
-    if (Array.isArray(maybeErrors) && maybeErrors.length) {
-      return maybeErrors
-        .map(e => (typeof e === 'string' ? e : e?.message || JSON.stringify(e)))
-        .join('; ');
-    }
-    if (typeof maybeErrors === 'object' && maybeErrors !== null) {
-      try {
-        const vals = Object.values(maybeErrors).flatMap(v => (Array.isArray(v) ? v : [v]));
-        const msgs = vals.map(v => (typeof v === 'string' ? v : v?.message || JSON.stringify(v))).filter(Boolean);
-        if (msgs.length) return msgs.join('; ');
-      } catch (e) {
-        // fall through
-      }
-    }
-    try {
-      return JSON.stringify(resp);
-    } catch (e) {
-      return String(resp);
-    }
-  }
-  return String(resp);
-}
-
 const AuthContext = createContext(null);
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -63,8 +30,8 @@ export function AuthProvider({ children }) {
       setUser(data.data.user);
       return data.data;
     } catch (err) {
-      const message = parseAxiosError(err) || 'Login failed';
-      console.error('Auth login error:', message, err);
+      console.log(err);
+      const message = err?.response?.data?.message || err?.response?.data?.error || err.message || 'Login failed';
       throw new Error(message);
     }
   };
@@ -74,8 +41,7 @@ export function AuthProvider({ children }) {
       const res = await axiosInstance.post('/api/auth/register', { firstName, lastName, email, password, cpassword, role });
       return res.data;
     } catch (err) {
-      const message = parseAxiosError(err) || 'Signup failed';
-      console.error('Auth signup error:', message, err);
+      const message = err?.response?.data?.message || err?.response?.data?.error || err.message || 'Signup failed';
       throw new Error(message);
     }
   };
