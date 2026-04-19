@@ -7,6 +7,7 @@ export default function Signup() {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [cpassword, setCpassword] = useState('');
   const [role, setRole] = useState('viewer');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -18,8 +19,7 @@ export default function Signup() {
     setLoading(true);
     setError('');
     try {
-      await signup({ firstName, lastName, email, password, role });
-      // auto-login after successful signup
+      await signup({ firstName, lastName, email, password, cpassword, role });
       await login({ email, password });
       navigate('/analyze');
     } catch (err) {
@@ -47,6 +47,8 @@ export default function Signup() {
         <input value={email} onChange={(e)=>setEmail(e.target.value)} required type="email" className="w-full mb-4 p-2 rounded-md bg-transparent border border-white/10" />
         <label className="block text-sm text-[#9ebedf] mb-1">Password</label>
         <input value={password} onChange={(e)=>setPassword(e.target.value)} required type="password" className="w-full mb-6 p-2 rounded-md bg-transparent border border-white/10" />
+        <label className="block text-sm text-[#9ebedf] mb-1">Confirm Password</label>
+        <input value={cpassword} onChange={(e)=>{ setCpassword(e.target.value); setError(''); }} required type="password" className="w-full mb-6 p-2 rounded-md bg-transparent border border-white/10" />
         <label className="block text-sm text-[#9ebedf] mb-1">Role</label>
         <select value={role} onChange={(e)=>setRole(e.target.value)} className="w-full mb-6 p-2 rounded-md bg-transparent border border-white/10">
           <option value="viewer">Viewer</option>

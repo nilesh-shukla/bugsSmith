@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate, faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
 import { ScatterChart, Scatter, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer} from 'recharts';
+import axiosInstance from '../api/axios';
 
 const VIZ_URL = 'http://127.0.0.1:8000/viz-data';
 
@@ -23,24 +24,20 @@ function Visualise({vizData: initialVizData = null, openSidebar}) {
     if (initialVizData) return;
     let isMounted = true;
     setLoading(true);
-    fetch(VIZ_URL)
-      .then((r) => {
-        if (!r.ok) throw new Error('No visual data yet');
-        return r.json();
-      }).then((json) => {
+    (async function fetchViz(){
+      try {
+        const res = await axiosInstance.get(VIZ_URL);
         if (isMounted) {
-          setVizData(json);
-          try { 
-            sessionStorage.setItem('viz_data', JSON.stringify(json)); 
-          }
-          catch(e) {}
+          setVizData(res.data);
+          try { sessionStorage.setItem('viz_data', JSON.stringify(res.data)); } catch (e) {}
         }
-      }).catch(() => {
+      } catch (e) {
         if (isMounted) setVizData(null);
-      }).finally(() => {
+      } finally {
         if (isMounted) setLoading(false);
         isMounted = false;
-      })
+      }
+    })();
   }, [initialVizData])
 
   // clear viz snapshot when the tab/window is closed

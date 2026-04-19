@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback, useEffect } from "react"
+import axiosInstance from '../api/axios';
 import Select from 'react-select'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faDownload, faGavel, faL, faArrowsRotate, faEllipsisVertical } from "@fortawesome/free-solid-svg-icons"
@@ -119,12 +120,11 @@ function Analyze({ openSidebar }) {
     // quick health check before uploading
     try {
       const healthUrl = API_URL.replace('/batch-predict', '/health');
-      const healthResp = await fetch(healthUrl, { method: 'GET' });
-      if (!healthResp.ok) {
-        throw new Error(`Backend responded with status ${healthResp.status}`);
+      const healthResp = await axiosInstance.get(healthUrl);
+      if (!healthResp || healthResp.status >= 400) {
+        throw new Error(`Backend responded with status ${healthResp?.status}`);
       }
-    } 
-    catch (e) {
+    } catch (e) {
       console.error('Backend health check failed:', e);
       setError(`Cannot reach backend at http://127.0.0.1:8000. Start the Flask server and try again.`);
       setLoading(false);
@@ -135,20 +135,10 @@ function Analyze({ openSidebar }) {
     formData.append('file', selectedFile);
 
     try{
-      const response = await fetch(API_URL, {
-        method: 'POST',
-        body: formData
-      });
-
-      // parse JSON safely
-      let data = null;
-      try {
-        data = await response.json();
-      } catch (parseErr) {
-        throw new Error(`Server returned non-JSON response (status ${response.status})`);
-      }
-      if(!response.ok){
-        const errorMsg = data?.details || data?.error || `Server Error (${response.status}).`;
+      const response = await axiosInstance.post(API_URL, formData);
+      const data = response.data;
+      if(!response || response.status >= 400){
+        const errorMsg = data?.details || data?.error || `Server Error (${response?.status}).`;
         throw new Error(errorMsg);
       }
 
