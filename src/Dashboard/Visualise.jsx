@@ -4,7 +4,7 @@ import { faArrowsRotate, faEllipsisVertical } from '@fortawesome/free-solid-svg-
 import { ScatterChart, Scatter, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer} from 'recharts';
 import axiosInstance from '../api/axios';
 
-const VIZ_URL = 'http://127.0.0.1:8000/viz-data';
+const VIZ_URL = 'http://127.0.0.1:5000/';
 
 function Visualise({vizData: initialVizData = null, openSidebar}) {
 

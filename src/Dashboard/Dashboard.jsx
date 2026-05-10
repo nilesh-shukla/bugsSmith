@@ -9,22 +9,6 @@ import ProfileActivity from './dashboard-Component/ProfileActivity';
 import SuspicionVSGenuineGraph from './dashboard-Component/SuspicionVSGenuineGraph';
 import { div, label, option, p, rect } from "framer-motion/client";
 
-const data = [
-  { name: "Monday", abv: "Mon", value: 400},
-  { name: "Tuesday", abv: "Tue", value: 700},
-  { name: "Wednesday", abv: "Wed", value: 1100},
-  { name: "Thursday", abv: "Thu", value: 2000},
-  { name: "Friday", abv: "Fri", value: 800},
-  { name: "Saturday", abv: "Sat", value: 1200},
-  { name: "Sunday", abv: "Sun", value: 239},
-];
-
-const time = [
-  { label: "Weekly" },
-  { label: "Monthly" },
-  { label: "Yearly" }
-];
-
 function Dashboard({ openSidebar }) {
   return (
     <div className='relative' >

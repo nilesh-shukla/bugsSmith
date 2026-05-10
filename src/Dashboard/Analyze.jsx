@@ -8,8 +8,6 @@ import FileFeatureCards from "./dashboard-Component/FileFeatureCards"
 import StraightLineMeter from "./dashboard-Component/StraightLineMeter"
 import { p, title } from "framer-motion/client"
 
-const API_URL = 'http://127.0.0.1:8000/batch-predict';
-
 function Analyze({ openSidebar }) {
 
   const [fileName, setFileName] = useState("Smith Here");
@@ -109,40 +107,43 @@ function Analyze({ openSidebar }) {
 
   const handleScan = async () => {
     if (!selectedFile) return;
-    const reader = new FileReader();
-    reader.onload = (event) => { setFileContent(event.target.result) };
-    reader.readAsText(selectedFile);
+
+    // Preview only for CSV files; otherwise show a placeholder
+    const isCsv = (selectedFile.type === 'text/csv') || selectedFile.name.toLowerCase().endsWith('.csv');
+    if (isCsv) {
+      const reader = new FileReader();
+      reader.onload = (event) => { setFileContent(event.target.result) };
+      reader.readAsText(selectedFile);
+    } else {
+      setFileContent('Binary/PDF file — preview not available');
+    }
 
     setLoading(true);
     setError(null);
-    setResults(null);
-
-    // quick health check before uploading
-    try {
-      const healthUrl = API_URL.replace('/batch-predict', '/health');
-      const healthResp = await axiosInstance.get(healthUrl);
-      if (!healthResp || healthResp.status >= 400) {
-        throw new Error(`Backend responded with status ${healthResp?.status}`);
-      }
-    } catch (e) {
-      console.error('Backend health check failed:', e);
-      setError(`Cannot reach backend at http://127.0.0.1:8000. Start the Flask server and try again.`);
-      setLoading(false);
-      return;
-    }
 
     const formData = new FormData();
     formData.append('file', selectedFile);
-
     try{
-      const response = await axiosInstance.post(API_URL, formData);
-      const data = response.data;
-      if(!response || response.status >= 400){
-        const errorMsg = data?.details || data?.error || `Server Error (${response?.status}).`;
+      // Upload once to the Node backend; Node is responsible for calling the ML service.
+      let uploadResp;
+      try {
+        uploadResp = await axiosInstance.post('/api/upload/upload-profiles', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+      } catch (uploadErr) {
+        console.error('Upload to /api/upload/upload-profiles failed:', uploadErr);
+        setError(`Upload Failed: ${uploadErr?.response?.data?.message || uploadErr.message}`);
+        setLoading(false);
+        return;
+      }
+
+      const data = uploadResp?.data || {};
+      if (!uploadResp || uploadResp.status >= 400) {
+        const errorMsg = data?.details || data?.error || `Server Error (${uploadResp?.status}).`;
         throw new Error(errorMsg);
       }
 
-      const totalScore = (data.profiles || []).reduce((sum, p) => sum + (p.Suspicoin_Score || p.Suspicion_Score || 0), 0);
+      const totalScore = (data.profiles || []).reduce((sum, p) => sum + (p.Suspicion_Score || p.suspicion_score || 0), 0);
       const averageScore = data.profiles && data.profiles.length > 0 ? Math.round(totalScore / data.profiles.length) : 0;
 
       setResults({
@@ -165,7 +166,7 @@ function Analyze({ openSidebar }) {
     }
     catch(err) {
       console.error("Batch analysis failed:", err);
-      setError(`Analysis Failed: ${err.message}. Ensure the Flask Server is running on port 8000.`);
+      setError(`Analysis Failed: ${err.message}.`);
     }
     finally {
       setLoading(false);
@@ -234,16 +235,18 @@ function Analyze({ openSidebar }) {
                 <h1 className='text-sm text-[#789] leading-tight mb-4'>Smith your file here to decrease the risk of coming across to any digital impersonators</h1>
                 <form action="" className='flex gap-1 '>
                   <label className="flex w-full items-center justify-between border-2 border-gray-400 rounded-lg px-4 py-1 cursor-pointer hover:border-blue-500 transition-colors duration-200">
-                    <input type="file" className="hidden" onChange={handleFileChange} accept=".csv" />
+                    <input type="file" className="hidden" onChange={handleFileChange} accept=".csv,.pdf" />
                     <span className="text-gray-500">{fileName}</span>
                     <div className="flex gap-5">
                       <div className="w-px bg-gray-500 h-6" />
                       <FontAwesomeIcon icon={faDownload} className="text-blue-400 text-xl" />
                     </div>
                   </label>
-                  <button type="button" onClick={handleScan} disabled={loading || !selectedFile} className={`px-3 py-2 rounded-lg text-white transition-all duration-200 cursor-pointer ${loading ? 'bg-blue-200 cursor-not-allowed' : 'bg-gradient-to-r from-[#66aaed] via-[#4392e0] to-[#137ced] hover:scale-105'}`}>
-                    {loading ? 'Scanning...' : 'Scan'}
-                  </button>
+                    <div className="flex gap-2">
+                      <button type="button" onClick={handleScan} disabled={loading || !selectedFile} className={`px-3 py-2 rounded-lg text-white transition-all duration-200 cursor-pointer ${loading ? 'bg-blue-200 cursor-not-allowed' : 'bg-gradient-to-r from-[#66aaed] via-[#4392e0] to-[#137ced] hover:scale-105'}`}>
+                        {loading ? 'Scanning...' : 'Scan'}
+                      </button>
+                    </div>
                 </form>
               </div>
 
