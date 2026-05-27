@@ -323,12 +323,16 @@ app = Flask(__name__)
 
 @app.route("/health", methods=["GET"])
 def health():
-    return jsonify({"status": "ok"})
+    return jsonify({
+        "status": "ok"
+    })
 
 
 @app.route("/_app_info", methods=["GET"])
 def app_info():
-    return jsonify({"app_file": __file__})
+    return jsonify({
+        "app_file": __file__
+    })
 
 
 @app.route("/predict", methods=["POST"])  
