@@ -4,6 +4,8 @@ import json
 import joblib
 import pandas as pd
 import numpy as np
+import re
+from datetime import datetime, timezone
 from flask import Flask, request, jsonify
 
 
@@ -134,6 +136,151 @@ def score_row(df_row: pd.DataFrame):
     return score, label, prob
 
 
+def get_confidence_percent(prob: float) -> int:
+    """Return a confidence percentage from model probability.
+
+    Uses the larger side of the class probability (distance from 0.5).
+    """
+    try:
+        return int(round(max(prob, 1.0 - prob) * 100))
+    except Exception:
+        return 0
+
+
+def get_feature_contributions(df_row: pd.DataFrame):
+    """Return a dict of feature -> contribution weight (normalized).
+
+    Prefer explanation module if provided. Otherwise use model attributes
+    like feature_importances_ or coef_. Returned values are relative
+    weights (sum to 1) when available.
+    """
+    # try explanation module
+    try:
+        if explanation and hasattr(explanation, "feature_contributions"):
+            return explanation.feature_contributions(df_row.iloc[0].to_dict()) or {}
+        if explanation and hasattr(explanation, "generate_feature_contributions"):
+            return explanation.generate_feature_contributions(df_row.iloc[0].to_dict()) or {}
+    except Exception:
+        pass
+
+    # fallback to model attributes
+    try:
+        # feature_importances_ (tree-based)
+        if hasattr(model, 'feature_importances_'):
+            imps = list(model.feature_importances_)
+            names = list(df_row.columns)
+            total = sum(imps) or 1.0
+            out = {n: float(i / total) for n, i in zip(names, imps)}
+            return out
+
+        # linear coeffs
+        if hasattr(model, 'coef_'):
+            coef = model.coef_
+            # coef_ may be 2D (n_classes, n_features)
+            arr = coef[0] if hasattr(coef, '__len__') and getattr(coef, '__len__') and hasattr(coef[0], '__len__') else coef
+            arr = [abs(float(x)) for x in arr]
+            names = list(df_row.columns)
+            total = sum(arr) or 1.0
+            out = {n: float(v / total) for n, v in zip(names, arr)}
+            return out
+    except Exception:
+        pass
+
+    return {}
+
+
+def detect_anomalies(payload: dict):
+    """Simple heuristic anomaly detector based on payload values."""
+    try:
+        anomalies = []
+        # basic numeric fields
+        followers = _to_int(payload.get('followers', payload.get('follower_count', 0)), 0)
+        following = _to_int(payload.get('following', payload.get('following_count', 1)), 1)
+        posts = _to_int(payload.get('posts', payload.get('num_posts', 0)), 0)
+        pic = payload.get('has_profile_pic', payload.get('profile_pic', None))
+        private = payload.get('private', payload.get('accountPrivacy', None))
+
+        username = str(payload.get('username', '') or '')
+        fullname = str(payload.get('fullname', payload.get('display_name', '')) or '')
+        bio = str(payload.get('bio', payload.get('description', '')) or '')
+
+        # Low-level checks (keep previous behavior)
+        if followers < 20:
+            anomalies.append('Low followers')
+        if posts == 0:
+            anomalies.append('No activity')
+        if pic is False or (isinstance(pic, str) and pic.strip().lower() in ('no', 'n', 'false', '0')):
+            anomalies.append('No profile image')
+        if private in (True, 'true', 'True', 'yes', 'Yes'):
+            anomalies.append('Private account')
+
+        # Username heuristics
+        if username:
+            digit_ratio = sum(c.isdigit() for c in username) / max(len(username), 1)
+            special_chars = sum(1 for c in username if not c.isalnum())
+            if digit_ratio > 0.6:
+                anomalies.append('Numeric username')
+            if special_chars / max(len(username), 1) > 0.3 or len(username) < 3:
+                anomalies.append('Suspicious username pattern')
+            if re.search(r'(.)\1{3,}', username):
+                anomalies.append('Repetitive characters in username')
+
+        # Bio heuristics
+        if bio:
+            url_count = len(re.findall(r'https?://', bio, flags=re.IGNORECASE))
+            email_like = len(re.findall(r'\S+@\S+\.\S+', bio))
+            hashtag_count = bio.count('#')
+            non_ascii = sum(1 for c in bio if ord(c) > 127) / max(len(bio), 1)
+            repeated_chars = bool(re.search(r'(.)\1{4,}', bio))
+
+            if url_count + email_like + hashtag_count >= 2:
+                anomalies.append('Spammy bio')
+            if non_ascii > 0.4 or repeated_chars:
+                anomalies.append('Bot-like bio')
+
+        # Follow ratio / farming
+        ratio = followers / max(following, 1)
+        if ratio < 0.1 or ratio > 10:
+            anomalies.append('Unusual follower ratio')
+
+        # High followers but low activity
+        if followers >= 1000 and posts < 5:
+            anomalies.append('High followers, low activity')
+
+        # Missing or auto-generated display name
+        if not fullname or fullname.strip() == '' or fullname.strip().lower() == username.strip().lower():
+            anomalies.append('Missing display name')
+
+        # New account detection (if created/created_at present)
+        created = payload.get('created_at') or payload.get('createdAt') or payload.get('account_created')
+        if created:
+            try:
+                # try parsing ISO-like strings first
+                created_dt = None
+                if isinstance(created, (int, float)):
+                    # assume epoch seconds
+                    created_dt = datetime.fromtimestamp(float(created), tz=timezone.utc)
+                else:
+                    created_dt = datetime.fromisoformat(str(created))
+                age_days = (datetime.now(timezone.utc) - created_dt).days
+                if age_days >= 0 and age_days < 30:
+                    anomalies.append('New account')
+            except Exception:
+                pass
+
+        # Deduplicate while preserving order
+        seen = set()
+        ordered = []
+        for a in anomalies:
+            if a not in seen:
+                ordered.append(a)
+                seen.add(a)
+
+        return ordered
+    except Exception:
+        return []
+
+
 def calculate_input_quality(payload: dict) -> int:
     important_fields = [
         "username",
@@ -220,11 +367,24 @@ def predict():
         
     input_quality_score = calculate_input_quality(payload if isinstance(payload, dict) else {})
     model_confidence = get_model_confidence(score, input_quality_score, prob if 'prob' in locals() else 0.0)
+    # additional outputs
+    confidence = get_confidence_percent(prob if 'prob' in locals() else 0.0)
+    feature_contributions = {}
+    try:
+        feature_contributions = get_feature_contributions(df)
+    except Exception:
+        feature_contributions = {}
+
+    anomalies = detect_anomalies(payload if isinstance(payload, dict) else {})
+
     response = {
         "risk_score": score,
         "status": label,
         "input_quality_score": input_quality_score,
         "model_confidence": model_confidence,
+        "confidence": confidence,
+        "feature_contributions": feature_contributions,
+        "anomalies": anomalies,
         "reasons": reasons
     }
     if input_quality_score < 40:
