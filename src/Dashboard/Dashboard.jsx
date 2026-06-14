@@ -1,5 +1,8 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEarthAsia, faPeopleLine, faRobot, faSkull, faPlus, faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext.jsx';
+import axios from '../api/axios.js';
 
 import Features from './dashboard-Component/Features';
 import Visualise from './Visualise';
@@ -10,6 +13,50 @@ import SuspicionVSGenuineGraph from './dashboard-Component/SuspicionVSGenuineGra
 import { div, label, option, p, rect } from "framer-motion/client";
 
 function Dashboard({ openSidebar }) {
+  const { user } = useAuth();
+
+  const [stats, setStats] = useState({
+    totalProfiles: 0,
+    suspicios:0,
+    genuine:0
+  });
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchDashboardData() {
+      try{
+        const params = {};
+
+        if(user?.id) {
+          params.userId = user.id;
+        }
+
+        const res = await axios.get('/api/analytics/scan-count', {
+          params
+        });
+
+        const payload = res.data || {};
+
+        const totalProfiles = payload.monthly?.reduce((sum, row) => sum+Number(row.total || 0), 0) || 0;
+        const suspicious = payload.monthlyBreakdown?.reduce((sum, row) => sum+Number(row.suspicious || 0), 0) || 0;
+        const genuine = payload.monthlyBreakdown?.reduce((sum, row) => sum+Number(row.genuine || 0), 0) || 0;
+
+        setStats({
+          totalProfiles,
+          suspicious,
+          genuine
+        });
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchDashboardData();
+  }, [user]);
+
   return (
     <div className='relative' >
       <img src="/dashboard-bg/dashboard.png" alt="" className='absolute opacity-30 w-full h-full z-0' />
@@ -44,10 +91,9 @@ function Dashboard({ openSidebar }) {
             </div>
             {/* Feature Section */}
             <div className='grid grid-rows-4 gap-2'>
-              <Features icon={faEarthAsia} iconBgColor={"bg-violet-500"} title="Overall Profiles" numbers="21,350" changingRate="5%" rateColor={"text-purple-500"}/>
-              <Features icon={faSkull} iconBgColor={"bg-blue-500"} title="Suspicious" numbers="8681" changingRate="10%" rateColor={"text-blue-500"}/>
-              <Features icon={faRobot} iconBgColor={"bg-gray-500"} title="Bots" numbers="324" changingRate="15%" rateColor={"text-blue-400"}/>
-              <Features icon={faPeopleLine} iconBgColor={"bg-green-500"} title="Clean" numbers="12,345" changingRate="20%" rateColor={"text-green-900"}/>
+              <Features icon={faEarthAsia} iconBgColor={"bg-violet-500"} title="Overall Profiles" numbers={loading ? "..." : (stats?.totalProfiles || 0).toLocaleString()} changingRate="" rateColor={"text-purple-500"}/>
+              <Features icon={faSkull} iconBgColor={"bg-blue-500"} title="Suspicious" numbers={loading ? "..." : (stats.suspicious || 0).toLocaleString()} changingRate="" rateColor={"text-blue-500"}/>
+              <Features icon={faPeopleLine} iconBgColor={"bg-green-500"} title="Clean" numbers={loading ? "..." : (stats.genuine || 0).toLocaleString()} changingRate="" rateColor={"text-green-900"}/>
             </div>
           </div>
 
