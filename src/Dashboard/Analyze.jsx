@@ -16,6 +16,7 @@ function Analyze({ openSidebar }) {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState(null);
   const [error, setError] = useState(null);
+  const [analysisSummary, setAnalysisSummary] = useState(null);
 
   // initialize results from sessionStorage so a refresh/tab switch does not clear them
   useEffect(() => {
@@ -24,9 +25,24 @@ function Analyze({ openSidebar }) {
       if (stored) {
         setResults(JSON.parse(stored));
       }
+      const storedAnalysisId = sessionStorage.getItem('analysis_id');
+      if (storedAnalysisId) {
+        fetchAnalysisSummary(storedAnalysisId);
+      }
     } 
     catch (e) {}
   }, []);
+
+  const fetchAnalysisSummary = async (analysisId) => {
+    try {
+      const response = await axiosInstance.get(
+        `/api/analytics/analysis/${analysisId}/summary`
+      );
+      setAnalysisSummary(response?.data?.data || null);
+    } catch (err) {
+      console.error('Failed to fetch analysis summary', err);
+    }
+  };
 
   // clear analyze results when the tab/window is closed
   useEffect(() => {
@@ -138,6 +154,11 @@ function Analyze({ openSidebar }) {
       }
 
       const data = uploadResp?.data || {};
+      const analysisId = data.analysisId;
+      if (analysisId) {
+        try { sessionStorage.setItem('analysis_id', analysisId); } catch (e) {}
+        try { await fetchAnalysisSummary(analysisId); } catch (e) { console.error(e); }
+      }
       if (!uploadResp || uploadResp.status >= 400) {
         const errorMsg = data?.details || data?.error || `Server Error (${uploadResp?.status}).`;
         throw new Error(errorMsg);
@@ -176,6 +197,38 @@ function Analyze({ openSidebar }) {
   const totalProfilesFound = currentResults.profiles.length;
   const averageSuspicion = currentResults.suspicion_score_average;
   const suspicionCountMessage = totalProfilesFound === 0 ? "No profiles exceeded the 30% risk threshold in this batch." : `Found ${totalProfilesFound} profiles requiring immediate action or monitoring.`;
+
+  const modelConfidence = analysisSummary?.overallConfidence ?? 0;
+  const dataIntegrity = analysisSummary?.overallDataIntegrity ?? 0;
+
+  const getIntegrityStatus = (score) => {
+    if (score >= 90)
+      return {
+        title: 'EXCELLENT',
+        text: 'text-green-500',
+        description: 'Dataset is highly complete and reliable.'
+      };
+
+    if (score >= 70)
+      return {
+        title: 'GOOD',
+        text: 'text-yellow-600',
+        description: 'Minor missing information detected.'
+      };
+
+    if (score >= 50)
+      return {
+        title: 'MODERATE',
+        text: 'text-orange-600',
+        description: 'Several fields are missing.'
+      };
+
+    return {
+      title: 'POOR',
+      text: 'text-red-600',
+      description: 'Significant data quality issues detected.'
+    };
+  };
 
   // allow explicit refresh/clear from UI to unmount current results
   const handleRefresh = () => {
@@ -335,15 +388,23 @@ function Analyze({ openSidebar }) {
           <div className="flex flex-col gap-2 h-full">
 
             <FileFeatureCards heading={"Model Confidence Score"}>
-              <p className="text-sm text-gray-500 mt-4">Represents the mean suspicion score of all profiles flagged above the 30% risk threshold.</p>
-                <h1 className="text-[2.8rem] font-semibold">{averageSuspicion}% <span className="text-sm text-blue-400 font-normal">Confidence</span></h1>
-              <StraightLineMeter value={averageSuspicion} min={0} max={100} width={700} ticks={10} />
+              <p className="text-sm text-gray-500 mt-4">Average confidence level of all predictions generated for this uploaded file.</p>
+                <h1 className="text-[2.8rem] font-semibold">{modelConfidence}% <span className="text-sm text-blue-400 font-normal">Confidence</span></h1>
+              <StraightLineMeter value={modelConfidence} min={0} max={100} width={700} ticks={10} />
             </FileFeatureCards>
 
             <FileFeatureCards heading={"Data Integrity & Completness"}>
-              <h1 className="text-[2.8rem] font-semibold mt-4">{currentResults.completness_score}/{currentResults.completness_total}<span className="text-sm text-[#3c5772] font-normal"> ({completnessData.title})</span></h1>   
+              <h1 className="text-[2.8rem] font-semibold mt-4">{dataIntegrity}%</h1>
               {/* features inside the dataset */}
-              <p className={`text-lg ${completnessData.text} leading-tight`}>{completnessData.description}</p>
+              {(() => {
+                const status = getIntegrityStatus(dataIntegrity);
+                return (
+                  <>
+                    <p className={`text-lg ${status.text} leading-tight`}>{status.description}</p>
+                    <p className="text-sm text-gray-500 mt-2 font-semibold">{status.title}</p>
+                  </>
+                );
+              })()}
             </FileFeatureCards>
 
           </div>
