@@ -1,41 +1,59 @@
-import { div, pre } from 'framer-motion/client';
-import React, { useState, useEffect, useRef } from 'react'
+import React from "react";
 
-function FileReaderSimulator({ fileContent }) {
-    const [displayedLines, setDisplayedLines] = useState([]);
-    const [finishedMessage, setFinishedMessage] = useState("")
-    const contentRef = useRef(null);
+function FileReaderSimulator({
+  processingIndex,
+  total,
+  percentage,
+  currentProfile,
+  isProcessing
+}) {
 
-    useEffect(() => {
-        if (!fileContent) {
-            setDisplayedLines([]);
-            setFinishedMessage("");
-            return;
-        }
+  // accept logs prop via rest args if provided (backwards compatible)
+  const logs = (arguments[0] && arguments[0].logs) || [];
 
-        const lines = fileContent.split("\n");
-        // Render entire file immediately
-        setDisplayedLines(lines);
-        setFinishedMessage("");
-    }, [fileContent]);
-
-    // Auto-scroll to bottom whenever content changes
-    useEffect(() => {
-        if (contentRef.current) {
-            contentRef.current.scrollTop = contentRef.current.scrollHeight;
-        }
-    }, [displayedLines]);
-
+  if (!isProcessing && processingIndex === 0) {
     return (
-        <div ref={contentRef} className={`file-reader-container p-4 bg-black text-white font-mono rounded-lg max-h-[40vh] sim-scroll-hide overflow-y-auto`}>
-            {displayedLines.map((line, idx) => (
-                <div key={idx}>{line}</div>
-            ))}
-            {finishedMessage && (
-                <div className='mt-2 text-green-400 font-semibold'>{finishedMessage}</div>
-            )}
-        </div>
+      <div className="file-reader-container h-full flex flex-col justify-center p-6 bg-black rounded-lg text-white font-mono sim-scroll-hide">
+        ---- LOGS WILL BE DISPLAYED HERE ----
+      </div>
     );
+  }
+
+  return (
+    <div className="h-full flex flex-col justify-start p-6 bg-black rounded-lg text-white font-mono">
+
+      <div className="mb-3 space-y-1">
+        {logs.map((line, idx) => (
+          <div key={idx} className="text-gray-300 text-sm">{line}</div>
+        ))}
+      </div>
+
+      <div className="flex justify-between mb-3">
+        <span className="text-sm text-gray-400">Scanning Profiles</span>
+        <span className="text-sm text-gray-400">{percentage}%</span>
+      </div>
+
+      <div className="w-full h-4 bg-gray-400 overflow-hidden">
+        <div
+          className="h-full bg-white transition-all duration-300"
+          style={{ width: `${percentage}%` }}
+        />
+      </div>
+
+      <div className="mt-4 text-sm text-gray-300">Progress: {processingIndex} of {total} profiles</div>
+
+      {currentProfile && (
+        <div className="mt-2 text-gray-300">
+          <div className="text-sm">Currently Analyzing:</div>
+          <div className="font-semibold mt-1">{currentProfile ? `@${currentProfile}` : '-'}</div>
+        </div>
+      )}
+
+      {!isProcessing && total > 0 && (
+        <div className="mt-auto text-sm text-green-400">[SUCCESS] Analysis Complete</div>
+      )}
+    </div>
+  );
 }
 
 export default FileReaderSimulator;

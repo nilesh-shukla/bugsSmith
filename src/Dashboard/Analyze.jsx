@@ -17,6 +17,16 @@ function Analyze({ openSidebar }) {
   const [results, setResults] = useState(null);
   const [error, setError] = useState(null);
   const [analysisSummary, setAnalysisSummary] = useState(null);
+  
+  // Progressive processing state
+  const [extractedProfiles, setExtractedProfiles] = useState([]);
+  const [mlResults, setMlResults] = useState([]);
+  const [displayedProfiles, setDisplayedProfiles] = useState([]);
+  const [displayedResults, setDisplayedResults] = useState([]);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [processingIndex, setProcessingIndex] = useState(0);
+  const [logs, setLogs] = useState([]);
+  const [currentProfile, setCurrentProfile] = useState(null);
 
   // initialize results from sessionStorage so a refresh/tab switch does not clear them
   useEffect(() => {
@@ -124,16 +134,6 @@ function Analyze({ openSidebar }) {
   const handleScan = async () => {
     if (!selectedFile) return;
 
-    // Preview only for CSV files; otherwise show a placeholder
-    const isCsv = (selectedFile.type === 'text/csv') || selectedFile.name.toLowerCase().endsWith('.csv');
-    if (isCsv) {
-      const reader = new FileReader();
-      reader.onload = (event) => { setFileContent(event.target.result) };
-      reader.readAsText(selectedFile);
-    } else {
-      setFileContent('Binary/PDF file — preview not available');
-    }
-
     setLoading(true);
     setError(null);
 
@@ -167,12 +167,38 @@ function Analyze({ openSidebar }) {
       const totalScore = (data.profiles || []).reduce((sum, p) => sum + (p.Suspicion_Score || p.suspicion_score || 0), 0);
       const averageScore = data.profiles && data.profiles.length > 0 ? Math.round(totalScore / data.profiles.length) : 0;
 
+      // Persist raw results for the table but also seed the progressive queue
+      const profiles = data.extractedProfiles || data.profiles || [];
+      const resultsArr = data.results || [];
+
       setResults({
-        profiles: data.profiles || [],
+        profiles: profiles,
         completness_score: data.completness_score,
         completness_total: data.completness_total,
         suspicion_score_average: averageScore
       });
+
+      // seed progressive display (logs-driven)
+      setExtractedProfiles(profiles);
+      setMlResults(resultsArr);
+      setDisplayedProfiles([]);
+      setDisplayedResults([]);
+      setProcessingIndex(0);
+      // static stage logs (keeps UI compact for many profiles)
+      setLogs([
+        '[INFO] Reading file...',
+        '[INFO] Parsing records...',
+        `[INFO] Found ${profiles.length} profiles`,
+        '[INFO] Extracting features...',
+        '[INFO] Starting analysis...'
+      ]);
+
+      if ((profiles?.length || 0) > 0) {
+        setTimeout(() => {
+          startProcessing(profiles, resultsArr);
+        }, 800);
+      }
+
       try { 
         sessionStorage.setItem('analyze_results', JSON.stringify(
           {
@@ -193,6 +219,42 @@ function Analyze({ openSidebar }) {
       setLoading(false);
     }
   };
+
+  // Helper for delays
+  const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+
+  const startProcessing = async ( 
+    profiles = extractedProfiles, 
+    resultArr = mlResults
+  ) => {
+    if(!profiles?.length) return;
+
+    setIsProcessing(true);
+
+    for(let i=0; i<profiles.length; i++){
+      // small pause to drive the progress meter
+      await delay(100);
+
+      // set current profile for compact UI
+      const p = profiles[i] || {};
+      const username = p.Username || p.username || p.Handle || p.handle || null;
+      setCurrentProfile(username ? `${username}` : null);
+
+      setDisplayedProfiles((prev) => [...prev, profiles[i]]);
+      setDisplayedResults((prev) => [...prev, resultArr[i]]);
+
+      setProcessingIndex(i+1);
+    }
+
+    // finished
+    setCurrentProfile(null);
+    setIsProcessing(false);
+  };
+  
+  const progressPercentage = 
+    extractedProfiles.length > 0 ? Math.round(
+      (processingIndex / extractedProfiles.length)*100
+    ) : 0;
 
   const totalProfilesFound = currentResults.profiles.length;
   const averageSuspicion = currentResults.suspicion_score_average;
@@ -369,14 +431,14 @@ function Analyze({ openSidebar }) {
             </div>
             {/* Simulator Here */}
             <div className=" mt-4 h-full overflow-y-auto">
-              {fileContent ? (
-                <FileReaderSimulator key={fileName} fileContent={fileContent} />
-              ) : (
-                <div className="p-6 h-full text-[#81acd7] font-mono bg-black rounded-lg border border-gray-600">
-                  ----SMITHING YOUR FILE HERE----
-                </div>
-              )
-              }
+              <FileReaderSimulator
+                logs={logs}
+                processingIndex={processingIndex}
+                total={extractedProfiles.length}
+                percentage={progressPercentage}
+                currentProfile={currentProfile}
+                isProcessing={isProcessing}
+              />
             </div>
           </div>
         </div>
